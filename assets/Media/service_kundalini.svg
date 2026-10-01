@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <defs>
+    <radialGradient id="bg-grad" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#2c1704" stop-opacity="0.95" />
+      <stop offset="45%" stop-color="#140c06" stop-opacity="0.98" />
+      <stop offset="100%" stop-color="#080811" stop-opacity="1" />
+    </radialGradient>
+    <radialGradient id="fire-core" cx="50%" cy="60%" r="35%">
+      <stop offset="0%" stop-color="#FFF4D0" stop-opacity="1" />
+      <stop offset="25%" stop-color="#F5D77F" stop-opacity="0.85" />
+      <stop offset="60%" stop-color="#E2922D" stop-opacity="0.45" />
+      <stop offset="100%" stop-color="#7B2C16" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="spiral-gold" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#E6CA65" stop-opacity="0.9" />
+      <stop offset="50%" stop-color="#D4AF37" stop-opacity="0.75" />
+      <stop offset="100%" stop-color="#F472B6" stop-opacity="0.9" />
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="14" result="blur1" />
+      <feGaussianBlur stdDeviation="28" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur2" />
+        <feMergeNode in="blur1" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="675" fill="url(#bg-grad)" />
+
+  <!-- Core Light Column -->
+  <ellipse cx="600" cy="380" rx="220" ry="240" fill="url(#fire-core)" />
+  <line x1="600" y1="50" x2="600" y2="620" stroke="url(#spiral-gold)" stroke-width="2.5" opacity="0.4" stroke-dasharray="8 6" filter="url(#glow)" />
+
+  <!-- Kundalini Double Caduceus Spirals -->
+  <g filter="url(#glow)">
+    <!-- Ascending Solar Serpent (Pingala) -->
+    <path d="M600,580 Q720,510 600,440 T600,300 T600,160 T600,60" fill="none" stroke="url(#spiral-gold)" stroke-width="4.5" stroke-linecap="round" />
+    <!-- Ascending Lunar Serpent (Ida) -->
+    <path d="M600,580 Q480,510 600,440 T600,300 T600,160 T600,60" fill="none" stroke="#FAF3E0" stroke-width="3" stroke-linecap="round" opacity="0.85" />
+  </g>
+
+  <!-- Chakras Energy Nodes along Axis -->
+  <g filter="url(#glow)">
+    <circle cx="600" cy="580" r="9" fill="#EF4444" opacity="0.9" />
+    <circle cx="600" cy="510" r="8" fill="#F97316" opacity="0.9" />
+    <circle cx="600" cy="440" r="8.5" fill="#EAB308" opacity="0.9" />
+    <circle cx="600" cy="370" r="9" fill="#34D399" opacity="0.95" />
+    <circle cx="600" cy="300" r="8" fill="#38BDF8" opacity="0.9" />
+    <circle cx="600" cy="230" r="8.5" fill="#8B5CF6" opacity="0.95" />
+    <circle cx="600" cy="160" r="11" fill="#FFFFFF" opacity="1" />
+    <circle cx="600" cy="60" r="14" fill="#F5D77F" opacity="0.9" />
+  </g>
+
+  <!-- Sacred Geometry Metatron Sparks & Radiance -->
+  <g opacity="0.35" stroke="#D4AF37" stroke-width="1.2" fill="none">
+    <circle cx="600" cy="337" r="160" />
+    <circle cx="600" cy="337" r="220" stroke-dasharray="4 8" />
+    <polygon points="600,117 790,447 410,447" />
+    <polygon points="600,557 790,227 410,227" />
+  </g>
+
+  <!-- Radiant Star at Crown -->
+  <g transform="translate(600, 60)" filter="url(#glow)">
+    <line x1="0" y1="-35" x2="0" y2="35" stroke="#FFF" stroke-width="2.5" />
+    <line x1="-35" y1="0" x2="35" y2="0" stroke="#FFF" stroke-width="2.5" />
+    <line x1="-22" y1="-22" x2="22" y2="22" stroke="#F5D77F" stroke-width="1.5" />
+    <line x1="22" y1="-22" x2="-22" y2="22" stroke="#F5D77F" stroke-width="1.5" />
+    <circle cx="0" cy="0" r="6" fill="#FFF" />
+  </g>
+</svg>

@@ -245,13 +245,25 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
   const currentArchangel =
     ARCHANGELS.find((a) => a.id === selectedId) || ARCHANGELS[6];
 
-  // Campana de sonido celestial armónica
-  const playHarmonicTone = (freq: number) => {
-    try {
+  const audioCtxRef = useRef<AudioContext | null>(null);
+
+  const getAudioContext = () => {
+    if (!audioCtxRef.current) {
       const AudioCtx =
         window.AudioContext ||
         (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      const ctx = new AudioCtx();
+      audioCtxRef.current = new AudioCtx();
+    }
+    if (audioCtxRef.current.state === "suspended") {
+      audioCtxRef.current.resume().catch(() => {});
+    }
+    return audioCtxRef.current;
+  };
+
+  // Campana de sonido celestial armónica
+  const playHarmonicTone = (freq: number) => {
+    try {
+      const ctx = getAudioContext();
       const now = ctx.currentTime;
 
       [freq, freq * 1.5, freq * 2].forEach((f, idx) => {

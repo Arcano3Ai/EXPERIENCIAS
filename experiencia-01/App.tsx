@@ -184,7 +184,7 @@ export function App() {
             >
               <div className="relative h-48 sm:h-52 w-full overflow-hidden bg-purple-950">
                 <img
-                  src="/assets/Media/service_cuantica.jpg"
+                  src="./assets/Media/service_cuantica.jpg"
                   alt="Canalización con Arcángeles"
                   className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700"
                 />
@@ -209,7 +209,7 @@ export function App() {
             >
               <div className="relative h-48 sm:h-52 w-full overflow-hidden bg-purple-950">
                 <img
-                  src="/assets/Media/service_tarot.jpg"
+                  src="./assets/Media/service_tarot.jpg"
                   alt="Tarot Evolutivo"
                   className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700"
                 />
@@ -234,7 +234,7 @@ export function App() {
             >
               <div className="relative h-48 sm:h-52 w-full overflow-hidden bg-purple-950">
                 <img
-                  src="/assets/Media/service_reiki.jpg"
+                  src="./assets/Media/service_reiki.jpg"
                   alt="Sanación Cuántica"
                   className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700"
                 />
@@ -259,7 +259,7 @@ export function App() {
             >
               <div className="relative h-48 sm:h-52 w-full overflow-hidden bg-purple-950 flex items-center justify-center">
                 <img
-                  src="/assets/Media/service_kundalini.svg"
+                  src="./assets/Media/service_kundalini.svg"
                   alt="Activación Kundalini"
                   className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700"
                 />
@@ -301,7 +301,7 @@ export function App() {
           <div className="flex justify-center">
             <div className="relative w-full max-w-md rounded-2xl overflow-hidden border-2 border-[#D4AF37] shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_40px_rgba(212,175,55,0.35)]">
               <img
-                src="/assets/Media/jessica_ramirez.jpg"
+                src="./assets/Media/jessica_ramirez.jpg"
                 alt="Con Reiki y Tarot con Jess"
                 className="w-full h-auto object-cover transform hover:scale-102 transition-transform duration-500"
               />
@@ -374,16 +374,16 @@ export function App() {
               {/* Fila de 4 Avatares de Consultantes del Mockup */}
               <div className="flex items-center justify-center gap-3 sm:gap-4 mb-6">
                 <div className="w-16 h-16 rounded-xl border border-[#D4AF37] overflow-hidden shadow-[0_0_15px_rgba(212,175,55,0.3)]">
-                  <img src="/assets/Media/jessica_ramirez.jpg" alt="Consultante" className="w-full h-full object-cover" />
+                  <img src="./assets/Media/jessica_ramirez.jpg" alt="Consultante" className="w-full h-full object-cover" />
                 </div>
                 <div className="w-16 h-16 rounded-xl border border-[#D4AF37] overflow-hidden shadow-[0_0_15px_rgba(212,175,55,0.3)]">
-                  <img src="/assets/Media/circulo_arcangeles.jpg" alt="Consultante" className="w-full h-full object-cover" />
+                  <img src="./assets/Media/circulo_arcangeles.jpg" alt="Consultante" className="w-full h-full object-cover" />
                 </div>
                 <div className="w-16 h-16 rounded-xl border border-[#D4AF37] overflow-hidden shadow-[0_0_15px_rgba(212,175,55,0.3)]">
-                  <img src="/assets/Media/service_tarot.jpg" alt="Consultante" className="w-full h-full object-cover" />
+                  <img src="./assets/Media/service_tarot.jpg" alt="Consultante" className="w-full h-full object-cover" />
                 </div>
                 <div className="w-16 h-16 rounded-xl border border-[#D4AF37] overflow-hidden shadow-[0_0_15px_rgba(212,175,55,0.3)]">
-                  <img src="/assets/Media/service_cuantica.jpg" alt="Consultante" className="w-full h-full object-cover" />
+                  <img src="./assets/Media/service_cuantica.jpg" alt="Consultante" className="w-full h-full object-cover" />
                 </div>
               </div>
 
@@ -417,7 +417,7 @@ export function App() {
               {/* Banner con Velas y Altar de Cuarzos */}
               <div className="w-full h-36 rounded-xl border border-[#D4AF37]/40 overflow-hidden mb-5">
                 <img
-                  src="/assets/Media/circulo_arcangeles.jpg"
+                  src="./assets/Media/circulo_arcangeles.jpg"
                   alt="Altar de Purificación y Membresías"
                   className="w-full h-full object-cover"
                 />

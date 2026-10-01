@@ -30,7 +30,7 @@ import { TibetanBowlsSanctuary } from "./TibetanBowlsSanctuary";
 import { SomaticRainstick } from "../experiencia-19/SomaticRainstick";
 import { ChakraEnergyMap } from "../experiencia-02/ChakraEnergyMap";
 import { SolfeggioCymaticsTuner } from "../experiencia-03/SolfeggioCymaticsTuner";
-import { ArchangelPortal } from "../experiencia-01/ArchangelPortal";
+import ArchangelApp from "../experiencia-01/App";
 
 export interface ExperienceDef {
   num: number;
@@ -398,8 +398,8 @@ export function ExperiencesHub() {
         {/* Componente de la Experiencia */}
         <main className="w-full">
           {activeExp.num === 1 && (
-            <div className="py-4 sm:py-6">
-              <ArchangelPortal />
+            <div className="w-full">
+              <ArchangelApp />
             </div>
           )}
           {activeExp.num === 2 && (
