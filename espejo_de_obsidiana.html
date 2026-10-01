@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-stone-950 text-stone-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Espejo de Obsidiana - Oráculo Tolteca</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Cinzel Decorative & Medieval/Ancient look -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;800&family=Metamorphous&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold-primary: #d4af37;
+      --gold-deep: #996515;
+      --gold-glow: rgba(212, 175, 55, 0.4);
+      --obsidian-black: #060608;
+    }
+
+    body {
+      font-family: 'Cinzel', serif;
+      user-select: none;
+      -webkit-user-select: none;
+      overflow-x: hidden;
+      background: radial-gradient(circle at center, #17110c 0%, #0a0705 60%, #030202 100%);
+    }
+
+    .font-decorative {
+      font-family: 'Cinzel Decorative', cursive;
+    }
+
+    .font-mystic {
+      font-family: 'Metamorphous', cursive;
+    }
+
+    /* Gold engraved border styling inspired by the Toltec frame */
+    .golden-frame {
+      border: 3px double #d4af37;
+      box-shadow: 0 0 25px rgba(212, 175, 55, 0.25), inset 0 0 20px rgba(153, 101, 21, 0.3);
+    }
+
+    .obsidian-container {
+      box-shadow: 
+        0 0 50px 15px rgba(0, 0, 0, 0.95),
+        inset 0 0 40px 10px rgba(0, 0, 0, 0.9),
+        0 0 35px 2px rgba(212, 175, 55, 0.35);
+    }
+
+    /* Candle flame animation */
+    @keyframes flicker {
+      0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.95; }
+      20% { transform: scale(0.96, 1.08) translate(-1px, -2px); opacity: 0.85; }
+      40% { transform: scale(1.05, 0.94) translate(1.5px, 0.5px); opacity: 1; }
+      60% { transform: scale(0.94, 1.04) translate(-0.5px, -1px); opacity: 0.9; }
+      80% { transform: scale(1.02, 0.98) translate(1px, -1.5px); opacity: 0.98; }
+    }
+
+    .flame-glow {
+      animation: flicker 0.16s infinite ease-in-out alternate;
+    }
+
+    /* Custom subtle pulse for the obsidian crown light */
+    @keyframes pulse-star {
+      0%, 100% { opacity: 0.8; transform: scale(1); filter: drop-shadow(0 0 14px #ffe699); }
+      50% { opacity: 1; transform: scale(1.15); filter: drop-shadow(0 0 24px #fff2b2); }
+    }
+
+    .pulsing-star {
+      animation: pulse-star 3.2s infinite ease-in-out;
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #4a3821;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-amber-100 flex flex-col items-center justify-between p-2 sm:p-4 select-none relative">
+
+  <!-- Ambient Altar Vignette Overlay -->
+  <div class="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(ellipse_at_center,_transparent_40%,_rgba(0,0,0,0.85)_100%)]"></div>
+  
+  <!-- Subtle Aztec Glyph Pattern Watermark -->
+  <div class="fixed inset-0 pointer-events-none opacity-5 z-0 bg-repeat bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:24px_24px]"></div>
+
+  <!-- HEADER: Title & Toltec Lore -->
+  <header class="relative z-10 w-full max-w-4xl text-center pt-2 sm:pt-4 px-2">
+    <div class="inline-flex items-center justify-center gap-2 mb-1">
+      <span class="text-amber-500/80 text-xl">✦</span>
+      <h1 class="text-2xl sm:text-4xl md:text-5xl font-decorative tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-600 font-bold drop-shadow-[0_2px_12px_rgba(212,175,55,0.4)]">
+        TEZCATLIPOCA
+      </h1>
+      <span class="text-amber-500/80 text-xl">✦</span>
+    </div>
+    <p class="text-xs sm:text-sm tracking-widest uppercase text-amber-300/70 font-mystic">
+      El Espejo Negro Humeante &bull; Oráculo de Obsidiana Ancestral
+    </p>
+  </header>
+
+  <main class="relative z-10 w-full max-w-5xl my-auto flex flex-col items-center justify-center">
+
+    <!-- Ornate Mystic Frame matching the artwork -->
+    <div class="relative w-full max-w-[620px] aspect-[4/5] sm:aspect-square flex items-center justify-center p-4">
+      
+      <!-- Outer Engraved Arch Backdrop SVG -->
+      <svg class="absolute inset-0 w-full h-full pointer-events-none z-10" viewBox="0 0 600 600" fill="none">
+        <defs>
+          <radialGradient id="goldGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#fdf498" />
+            <stop offset="45%" stop-color="#c69234" />
+            <stop offset="75%" stop-color="#805615" />
+            <stop offset="100%" stop-color="#3b2505" />
+          </radialGradient>
+          <filter id="glowGold">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- Outer Arch and Corner Ornaments -->
+        <rect x="20" y="20" width="560" height="560" rx="20" stroke="url(#goldGrad)" stroke-width="4" opacity="0.6" />
+        <rect x="28" y="28" width="544" height="544" rx="16" stroke="#996515" stroke-width="1.5" stroke-dasharray="8 6" opacity="0.8" />
+
+        <!-- Toltec Skulls in Top Corners (Stylized Glyphs) -->
+        <!-- Left Skull Crown -->
+        <g transform="translate(48, 52) scale(0.65)" opacity="0.85">
+          <circle cx="24" cy="24" r="22" stroke="url(#goldGrad)" stroke-width="3" fill="#140f09" />
+          <circle cx="16" cy="18" r="4" fill="#d4af37" />
+          <circle cx="32" cy="18" r="4" fill="#d4af37" />
+          <path d="M 16 33 L 32 33 M 20 27 L 28 27" stroke="url(#goldGrad)" stroke-width="2.5" />
+          <!-- Radiating Crown rays -->
+          <path d="M 24 0 L 24 -10 M 8 6 L 1 -1 M 40 6 L 47 -1 M -2 24 L -12 24 M 50 24 L 60 24" stroke="url(#goldGrad)" stroke-width="2.5" />
+        </g>
+        <!-- Center Arch Skull -->
+        <g transform="translate(280, 42) scale(0.75)" opacity="0.95">
+          <circle cx="24" cy="24" r="22" stroke="url(#goldGrad)" stroke-width="3.5" fill="#1b120a" filter="url(#glowGold)" />
+          <circle cx="15" cy="19" r="4.5" fill="#f59e0b" />
+          <circle cx="33" cy="19" r="4.5" fill="#f59e0b" />
+          <path d="M 14 34 L 34 34 M 18 28 L 30 28" stroke="url(#goldGrad)" stroke-width="2.5" />
+        </g>
+        <!-- Right Skull Crown -->
+        <g transform="translate(492, 52) scale(0.65)" opacity="0.85">
+          <circle cx="24" cy="24" r="22" stroke="url(#goldGrad)" stroke-width="3" fill="#140f09" />
+          <circle cx="16" cy="18" r="4" fill="#d4af37" />
+          <circle cx="32" cy="18" r="4" fill="#d4af37" />
+          <path d="M 16 33 L 32 33 M 20 27 L 28 27" stroke="url(#goldGrad)" stroke-width="2.5" />
+          <path d="M 24 0 L 24 -10 M 8 6 L 1 -1 M 40 6 L 47 -1 M -2 24 L -12 24 M 50 24 L 60 24" stroke="url(#goldGrad)" stroke-width="2.5" />
+        </g>
+
+        <!-- Golden Feather Garland Arch -->
+        <path d="M 90 280 C 90 140 200 95 300 95 C 400 95 510 140 510 280" stroke="url(#goldGrad)" stroke-width="14" stroke-linecap="round" opacity="0.75" />
+        <path d="M 90 280 C 90 140 200 95 300 95 C 400 95 510 140 510 280" stroke="#000" stroke-width="4" stroke-dasharray="6 10" opacity="0.9" />
+
+        <!-- Obsidian Crystals Base at Bottom Center -->
+        <g transform="translate(260, 480)" opacity="0.95">
+          <!-- Central large crystal blade -->
+          <polygon points="40,-35 55,20 40,40 25,20" fill="#0f0c0b" stroke="url(#goldGrad)" stroke-width="2.5" filter="url(#glowGold)"/>
+          <line x1="40" y1="-35" x2="40" y2="40" stroke="#ffd978" stroke-width="1.5" opacity="0.6"/>
+          <!-- Left crystal shard -->
+          <polygon points="12,-15 28,25 15,38 2,20" fill="#0c0908" stroke="url(#goldGrad)" stroke-width="2"/>
+          <!-- Right crystal shard -->
+          <polygon points="68,-15 78,20 65,38 52,25" fill="#0c0908" stroke="url(#goldGrad)" stroke-width="2"/>
+        </g>
+      </svg>
+
+      <!-- Left Ceremonial Flame & Incense Stand -->
+      <div class="absolute left-3 sm:left-6 bottom-8 sm:bottom-12 z-20 flex flex-col items-center pointer-events-none">
+        <!-- Canvas for dynamic rising smoke plumes -->
+        <canvas id="candleSmokeLeft" class="w-20 h-44 mb--4 opacity-80"></canvas>
+        <!-- Flickering Flame Core -->
+        <div class="relative flex items-center justify-center">
+          <div class="flame-glow w-5 h-8 bg-gradient-to-t from-orange-600 via-amber-400 to-yellow-100 rounded-full blur-[1px] shadow-[0_0_18px_#ff9900]"></div>
+          <div class="absolute top-2 w-2 h-4 bg-white rounded-full opacity-80 blur-[0.5px]"></div>
+          <div class="absolute -top-1 w-8 h-8 bg-amber-500/20 rounded-full blur-md"></div>
+        </div>
+        <!-- Wax Candle Base -->
+        <div class="w-10 h-7 bg-gradient-to-b from-stone-200 to-stone-400 rounded-t-sm shadow-inner mt-1 border-t border-amber-200/50"></div>
+        <!-- Golden Chalice Base -->
+        <div class="w-14 h-4 bg-gradient-to-r from-yellow-700 via-amber-400 to-yellow-800 rounded-b-lg shadow-md border-t border-amber-300"></div>
+      </div>
+
+      <!-- Right Ceremonial Flame & Incense Stand -->
+      <div class="absolute right-3 sm:right-6 bottom-8 sm:bottom-12 z-20 flex flex-col items-center pointer-events-none">
+        <canvas id="candleSmokeRight" class="w-20 h-44 mb--4 opacity-80"></canvas>
+        <div class="relative flex items-center justify-center">
+          <div class="flame-glow w-5 h-8 bg-gradient-to-t from-orange-600 via-amber-400 to-yellow-100 rounded-full blur-[1px] shadow-[0_0_18px_#ff9900]"></div>
+          <div class="absolute top-2 w-2 h-4 bg-white rounded-full opacity-80 blur-[0.5px]"></div>
+          <div class="absolute -top-1 w-8 h-8 bg-amber-500/20 rounded-full blur-md"></div>
+        </div>
+        <div class="w-10 h-7 bg-gradient-to-b from-stone-200 to-stone-400 rounded-t-sm shadow-inner mt-1 border-t border-amber-200/50"></div>
+        <div class="w-14 h-4 bg-gradient-to-r from-yellow-700 via-amber-400 to-yellow-800 rounded-b-lg shadow-md border-t border-amber-300"></div>
+      </div>
+
+      <!-- THE OBSIDIAN MIRROR SPHERE -->
+      <div id="mirrorFrame" class="relative z-10 w-[290px] h-[290px] sm:w-[380px] sm:h-[380px] md:w-[410px] md:h-[410px] rounded-full p-2 bg-gradient-to-br from-amber-700 via-yellow-600 to-stone-900 shadow-2xl flex items-center justify-center cursor-pointer transition-transform duration-300 hover:scale-[1.015]">
+        
+        <!-- Gold Beveled Rim -->
+        <div class="w-full h-full rounded-full p-2.5 bg-gradient-to-tr from-stone-950 via-[#1c140a] to-[#2e2110] border-2 border-amber-500/60 shadow-[inset_0_0_20px_rgba(0,0,0,0.9)] flex items-center justify-center relative overflow-hidden">
+          
+          <!-- Outer Shadow Inset Ring -->
+          <div class="absolute inset-0 rounded-full shadow-[inset_0_0_40px_15px_rgba(0,0,0,0.98)] pointer-events-none z-20"></div>
+
+          <!-- Top Ethereal Cosmic Spark (The glowing star from the artwork) -->
+          <div class="pulsing-star absolute top-3 sm:top-5 z-20 pointer-events-none flex flex-col items-center">
+            <div class="w-4 h-4 bg-white rounded-full blur-[1px] shadow-[0_0_25px_8px_#ffd978]"></div>
+            <!-- Starburst Spikes -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-[2px] bg-gradient-to-r from-transparent via-amber-100 to-transparent"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-16 w-[2px] bg-gradient-to-b from-transparent via-amber-100 to-transparent"></div>
+          </div>
+
+          <!-- Glass Refraction Arc Glint -->
+          <div class="absolute -top-12 -left-12 w-3/4 h-3/4 rounded-full bg-gradient-to-br from-white/10 via-amber-200/5 to-transparent blur-md pointer-events-none z-20 transform rotate-12"></div>
+
+          <!-- Interactive Canvas: Obsidian Cosmic Vortex & Stardust -->
+          <canvas id="obsidianCanvas" class="w-full h-full rounded-full z-10 touch-none bg-black"></canvas>
+
+          <!-- Oracle Reveal Overlay -->
+          <div id="oracleOverlay" class="absolute inset-0 z-30 rounded-full flex flex-col items-center justify-center p-6 text-center bg-black/85 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-700">
+            <div id="oracleGlyph" class="text-4xl sm:text-5xl text-amber-400 mb-2 drop-shadow-[0_0_15px_#f59e0b]"></div>
+            <h3 id="oracleTitle" class="text-lg sm:text-xl font-decorative font-bold text-amber-200 tracking-wider"></h3>
+            <p id="oracleSubtitle" class="text-xs uppercase tracking-widest text-amber-400/80 mb-3"></p>
+            <p id="oracleText" class="text-xs sm:text-sm text-stone-300 max-w-[260px] leading-relaxed italic border-t border-b border-amber-500/30 py-2"></p>
+            <button id="closeOracleBtn" class="mt-4 px-3 py-1 text-xs tracking-wider uppercase font-semibold text-amber-300 border border-amber-500/50 rounded-full hover:bg-amber-500/20 transition-colors">
+              Cerrar Visión
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Instruction Subtitle -->
+    <div class="mt-2 text-center">
+      <p class="text-xs sm:text-sm text-amber-200/80 tracking-widest uppercase flex items-center justify-center gap-2">
+        <span class="animate-pulse text-amber-400">✧</span>
+        Pasa el dedo o cursor para perturbar el humo &bull; Toca para Consultar
+        <span class="animate-pulse text-amber-400">✧</span>
+      </p>
+    </div>
+  </main>
+
+  <footer class="relative z-10 w-full max-w-4xl px-3 py-2 sm:py-3 mt-1 bg-stone-900/60 backdrop-blur-md rounded-2xl border border-amber-900/40 shadow-xl flex flex-wrap items-center justify-between gap-3 text-xs">
+    
+    <!-- Divination Button -->
+    <button id="consultBtn" class="px-4 py-2 bg-gradient-to-r from-amber-700 via-amber-600 to-yellow-600 hover:from-amber-600 hover:to-yellow-500 text-stone-950 font-bold uppercase tracking-wider rounded-lg shadow-lg shadow-amber-900/40 transition-all active:scale-95 flex items-center gap-2">
+      <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+      Consultar Oráculo
+    </button>
+
+    <!-- Vortex Sliders -->
+    <div class="flex items-center gap-4 sm:gap-6 flex-wrap">
+      <!-- Speed Slider -->
+      <div class="flex items-center gap-2">
+        <label for="speedRange" class="text-amber-300/80">Vórtice:</label>
+        <input id="speedRange" type="range" min="0.5" max="3.0" step="0.1" value="1.2" class="w-20 sm:w-24 accent-amber-500 cursor-pointer bg-stone-800">
+      </div>
+
+      <!-- Smoke Tendrils Density -->
+      <div class="flex items-center gap-2">
+        <label for="densityRange" class="text-amber-300/80">Niebla:</label>
+        <input id="densityRange" type="range" min="0.3" max="2.0" step="0.1" value="1.0" class="w-20 sm:w-24 accent-amber-500 cursor-pointer bg-stone-800">
+      </div>
+    </div>
+
+    <!-- Mystical Audio Atmosphere Toggle -->
+    <button id="audioToggle" class="px-3 py-1.5 border border-amber-500/40 hover:border-amber-400 rounded-lg text-amber-200/90 flex items-center gap-1.5 transition-colors">
+      <span id="audioIcon">🔇</span>
+      <span id="audioText">Música Sagrada</span>
+    </button>
+  </footer>
+
+  <!-- Notification Toast Modal for Interactive guidance -->
+  <div id="toastBox" class="fixed bottom-20 z-50 pointer-events-none opacity-0 transition-opacity duration-300 bg-stone-900/90 border border-amber-500/50 text-amber-200 px-4 py-2 rounded-lg text-xs shadow-2xl">
+    <!-- Feedback messages -->
+  </div>
+
+  <!-- JAVASCRIPT: Obsidian Simulation, Smoke Physics, Toltec Oracle & Web Audio -->
+  <script>
+    const obsidianCanvas = document.getElementById('obsidianCanvas');
+    const ctx = obsidianCanvas.getContext('2d');
+
+    const candleLeft = document.getElementById('candleSmokeLeft');
+    const ctxLeft = candleLeft.getContext('2d');
+    const candleRight = document.getElementById('candleSmokeRight');
+    const ctxRight = candleRight.getContext('2d');
+
+    const oracleOverlay = document.getElementById('oracleOverlay');
+    const oracleGlyph = document.getElementById('oracleGlyph');
+    const oracleTitle = document.getElementById('oracleTitle');
+    const oracleSubtitle = document.getElementById('oracleSubtitle');
+    const oracleText = document.getElementById('oracleText');
+    const closeOracleBtn = document.getElementById('closeOracleBtn');
+    const consultBtn = document.getElementById('consultBtn');
+    const mirrorFrame = document.getElementById('mirrorFrame');
+    const speedRange = document.getElementById('speedRange');
+    const densityRange = document.getElementById('densityRange');
+    const audioToggle = document.getElementById('audioToggle');
+    const audioIcon = document.getElementById('audioIcon');
+    const audioText = document.getElementById('audioText');
+    const toastBox = document.getElementById('toastBox');
+
+    let vortexSpeed = 1.2;
+    let smokeDensity = 1.0;
+    let width = 400;
+    let height = 400;
+    let centerX = 200;
+    let centerY = 200;
+    let radius = 190;
+
+    // Pointer Interaction State
+    let pointer = {
+      x: centerX,
+      y: centerY,
+      prevX: centerX,
+      prevY: centerY,
+      isDown: false,
+      speed: 0,
+      active: false
+    };
+
+    // Toltec Oracle Archetypes & Messages
+    const toltecCards = [
+      {
+        glyph: "◈",
+        name: "Tezcatlipoca",
+        sub: "Señor del Espejo Humeante",
+        text: "Mírate en tu propia sombra sin juzgar. La verdad no habita en lo que finges ser, sino en el abismo que estás dispuesto a integrar."
+      },
+      {
+        glyph: "𓅃",
+        name: "Quetzalcóatl",
+        sub: "La Serpiente Emplumada",
+        text: "Unifica la tierra de tus instintos con el cielo de tu conciencia. Es momento de renacer desde tus cenizas y crear con sabiduría."
+      },
+      {
+        glyph: "☼",
+        name: "Huitzilopochtli",
+        sub: "El Colibrí del Sur",
+        text: "La voluntad inquebrantable vence toda inercia. Despierta tu guerrero interno; no luches contra otros, sino contra tu propia pereza."
+      },
+      {
+        glyph: "☽",
+        name: "Metztli",
+        sub: "El Misterio de la Luna",
+        text: "Confía en los ciclos ocultos y en tu intuición nocturna. Lo que parece quietud es gestación de una nueva luz interior."
+      },
+      {
+        glyph: "❖",
+        name: "Tonal & Nahual",
+        sub: "El Orden y el Vórtice",
+        text: "El mundo visible es apenas una isla en el océano de lo desconocido. Abraza el misterio sin perder tu centro terrenal."
+      },
+      {
+        glyph: "✦",
+        name: "Xipe Tótec",
+        sub: "El Desprendimiento Sagrado",
+        text: "Para que surja la nueva espiga, la cáscara vieja debe romperse. Suelta apegos y resentimientos antiguos para florecer de nuevo."
+      },
+      {
+        glyph: "𓆙",
+        name: "Coatlicue",
+        sub: "Madre Nutricia y Transformadora",
+        text: "Todo lo que nace retorna a la tierra. Acepta los finales con gratitud, pues son la cuna de los más fértiles comienzos."
+      }
+    ];
+
+    // Particle arrays for the obsidian orb interior
+    const cosmicStars = [];
+    const NUM_STARS = 160;
+
+    const smokeTendrils = [];
+    const NUM_TENDRILS = 55;
+
+    class CosmicStar {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = Math.random() * (radius * 0.95);
+        this.x = centerX + Math.cos(angle) * dist;
+        this.y = centerY + Math.sin(angle) * dist;
+        this.distance = dist;
+        this.angle = angle;
+        this.size = Math.random() * 2.2 + 0.6;
+        this.baseAlpha = Math.random() * 0.7 + 0.3;
+        this.speed = (Math.random() * 0.006 + 0.002) * (Math.random() > 0.4 ? 1 : -1);
+        this.radialSpeed = (Math.random() - 0.5) * 0.2;
+        this.color = Math.random() > 0.4 ? '#fde047' : (Math.random() > 0.5 ? '#f97316' : '#ffffff');
+      }
+
+      update(time) {
+        // Orbital motion around the mirror's core
+        this.angle += this.speed * vortexSpeed;
+        this.distance += this.radialSpeed;
+        if (this.distance > radius * 0.96 || this.distance < 8) {
+          this.radialSpeed *= -1;
+        }
+
+        // Pointer gravity disturbance
+        if (pointer.active) {
+          const dx = this.x - pointer.x;
+          const dy = this.y - pointer.y;
+          const pDist = Math.hypot(dx, dy);
+          if (pDist < 80 && pDist > 1) {
+            const force = (80 - pDist) / 80 * 1.8;
+            this.x += (dx / pDist) * force * 2;
+            this.y += (dy / pDist) * force * 2;
+          }
+        }
+
+        this.x = centerX + Math.cos(this.angle) * this.distance;
+        this.y = centerY + Math.sin(this.angle) * this.distance;
+      }
+
+      draw(c) {
+        c.save();
+        c.beginPath();
+        c.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        c.fillStyle = this.color;
+        c.globalAlpha = this.baseAlpha;
+        c.shadowColor = this.color;
+        c.shadowBlur = this.size > 1.8 ? 8 : 3;
+        c.fill();
+        c.restore();
+      }
+    }
+
+    class SmokeTendril {
+      constructor(index) {
+        this.index = index;
+        this.init();
+      }
+
+      init() {
+        this.angle = (this.index / NUM_TENDRILS) * Math.PI * 2;
+        this.dist = 20 + Math.random() * (radius * 0.75);
+        this.len = 45 + Math.random() * 70;
+        this.curve = (Math.random() - 0.5) * 1.4;
+        this.width = Math.random() * 16 + 6;
+        this.alpha = Math.random() * 0.12 + 0.04;
+        this.rotSpeed = (0.003 + Math.random() * 0.005) * (this.dist < 80 ? 1.4 : 0.8);
+        this.hueShift = Math.random();
+      }
+
+      update() {
+        this.angle += this.rotSpeed * vortexSpeed;
+
+        // Interaction swirl push
+        if (pointer.active && pointer.speed > 0.5) {
+          const sx = centerX + Math.cos(this.angle) * this.dist;
+          const sy = centerY + Math.sin(this.angle) * this.dist;
+          const d = Math.hypot(sx - pointer.x, sy - pointer.y);
+          if (d < 110) {
+            this.angle += 0.02 * (pointer.speed * 0.15);
+            this.dist += (Math.random() - 0.5) * 4;
+            this.dist = Math.max(15, Math.min(radius * 0.9, this.dist));
+          }
+        }
+      }
+
+      draw(c) {
+        c.save();
+        c.translate(centerX, centerY);
+        c.rotate(this.angle);
+
+        const grad = c.createLinearGradient(0, this.dist, this.curve * 40, this.dist + this.len);
+        if (this.hueShift > 0.7) {
+          // Subtle warm golden amber smoke
+          grad.addColorStop(0, `rgba(217, 119, 6, 0)`);
+          grad.addColorStop(0.5, `rgba(180, 120, 30, ${this.alpha * smokeDensity})`);
+          grad.addColorStop(1, `rgba(20, 15, 10, 0)`);
+        } else {
+          // Deep obsidian grey mist
+          grad.addColorStop(0, `rgba(40, 40, 50, 0)`);
+          grad.addColorStop(0.5, `rgba(60, 65, 80, ${this.alpha * 1.4 * smokeDensity})`);
+          grad.addColorStop(1, `rgba(0, 0, 0, 0)`);
+        }
+
+        c.beginPath();
+        c.ellipse(0, this.dist + this.len * 0.4, this.width, this.len * 0.6, this.curve, 0, Math.PI * 2);
+        c.fillStyle = grad;
+        c.fill();
+
+        c.restore();
+      }
+    }
+
+    // Populate particles
+    for (let i = 0; i < NUM_STARS; i++) cosmicStars.push(new CosmicStar());
+    for (let i = 0; i < NUM_TENDRILS; i++) smokeTendrils.push(new SmokeTendril(i));
+
+    // Dynamic curling candle smoke plumes
+    const candleSmokeLeftParticles = [];
+    const candleSmokeRightParticles = [];
+
+    function createCandleParticle(sourceX, sourceY) {
+      return {
+        x: sourceX,
+        y: sourceY,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: -(Math.random() * 0.8 + 0.7),
+        size: Math.random() * 4 + 3,
+        maxSize: Math.random() * 22 + 14,
+        alpha: 0.35,
+        life: 0,
+        maxLife: Math.random() * 80 + 70,
+        curl: (Math.random() - 0.5) * 0.05
+      };
+    }
+
+    function updateCandlePlume(ctxElem, particles, widthC, heightC) {
+      ctxElem.clearRect(0, 0, widthC, heightC);
+      
+      // Spawn new particles from flame tip
+      if (Math.random() > 0.25) {
+        particles.push(createCandleParticle(widthC / 2, heightC - 10));
+      }
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.life++;
+        p.vx += p.curl;
+        p.x += p.vx + Math.sin(p.life * 0.05) * 0.35;
+        p.y += p.vy;
+        p.size += (p.maxSize - p.size) * 0.02;
+
+        const progress = p.life / p.maxLife;
+        const currentAlpha = p.alpha * (1 - progress);
+
+        if (progress >= 1 || p.y < 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctxElem.save();
+        ctxElem.beginPath();
+        ctxElem.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctxElem.fillStyle = `rgba(180, 175, 165, ${currentAlpha * 0.55})`;
+        ctxElem.shadowColor = 'rgba(255, 230, 180, 0.2)';
+        ctxElem.shadowBlur = 4;
+        ctxElem.fill();
+        ctxElem.restore();
+      }
+    }
+
+    function resizeCanvases() {
+      const rect = obsidianCanvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      width = rect.width;
+      height = rect.height;
+      obsidianCanvas.width = width * dpr;
+      obsidianCanvas.height = height * dpr;
+      ctx.scale(dpr, dpr);
+
+      centerX = width / 2;
+      centerY = height / 2;
+      radius = Math.min(centerX, centerY) - 4;
+
+      // Candle smoke canvases
+      candleLeft.width = candleLeft.clientWidth * dpr;
+      candleLeft.height = candleLeft.clientHeight * dpr;
+      ctxLeft.scale(dpr, dpr);
+
+      candleRight.width = candleRight.clientWidth * dpr;
+      candleRight.height = candleRight.clientHeight * dpr;
+      ctxRight.scale(dpr, dpr);
+    }
+
+    window.addEventListener('resize', resizeCanvases);
+
+    let audioCtx = null;
+    let isAudioPlaying = false;
+    let masterGain = null;
+    let droneOsc1 = null;
+    let droneOsc2 = null;
+    let chimeInterval = null;
+
+    function initAudio() {
+      if (audioCtx) return;
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AudioContext();
+
+      masterGain = audioCtx.createGain();
+      masterGain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+      masterGain.connect(audioCtx.destination);
+
+      // Deep Sacred Singing Bowl Drone (Root 108Hz Toltec sacred frequency & harmonics)
+      droneOsc1 = audioCtx.createOscillator();
+      droneOsc1.type = 'sine';
+      droneOsc1.frequency.setValueAtTime(108, audioCtx.currentTime); // A2 harmonic
+
+      const droneGain1 = audioCtx.createGain();
+      droneGain1.gain.setValueAtTime(0.35, audioCtx.currentTime);
+      droneOsc1.connect(droneGain1);
+      droneGain1.connect(masterGain);
+
+      // Secondary mystical drone
+      droneOsc2 = audioCtx.createOscillator();
+      droneOsc2.type = 'triangle';
+      droneOsc2.frequency.setValueAtTime(162, audioCtx.currentTime); // Perfect fifth harmonic
+
+      const droneGain2 = audioCtx.createGain();
+      droneGain2.gain.setValueAtTime(0.18, audioCtx.currentTime);
+      droneOsc2.connect(droneGain2);
+      droneGain2.connect(masterGain);
+
+      droneOsc1.start();
+      droneOsc2.start();
+
+      // Atmospheric Wind / Shaker synthesis
+      startCeremonialChimes();
+    }
+
+    function startCeremonialChimes() {
+      chimeInterval = setInterval(() => {
+        if (!isAudioPlaying || !audioCtx) return;
+        playCeremonialBell();
+      }, 5500);
+    }
+
+    function playCeremonialBell() {
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      const freqs = [432, 540, 648, 864];
+      const note = freqs[Math.floor(Math.random() * freqs.length)];
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(note, now);
+
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.exponentialRampToValueAtTime(0.08, now + 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.8);
+
+      osc.connect(gain);
+      gain.connect(masterGain);
+
+      osc.start(now);
+      osc.stop(now + 4.0);
+    }
+
+    function playOracleRevealSound() {
+      if (!audioCtx || !isAudioPlaying) return;
+      const now = audioCtx.currentTime;
+      
+      // Deep whoosh + crystalline resonance
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(80, now);
+      osc.frequency.exponentialRampToValueAtTime(320, now + 1.2);
+
+      gain.gain.setValueAtTime(0.01, now);
+      gain.gain.linearRampToValueAtTime(0.18, now + 0.6);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 2.5);
+
+      osc.connect(gain);
+      gain.connect(masterGain);
+      osc.start(now);
+      osc.stop(now + 2.6);
+    }
+
+    function toggleAudio() {
+      if (!audioCtx) {
+        initAudio();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+
+      if (isAudioPlaying) {
+        masterGain.gain.linearRampToValueAtTime(0.0001, audioCtx.currentTime + 1.0);
+        isAudioPlaying = false;
+        audioIcon.textContent = '🔇';
+        audioText.textContent = 'Música Sagrada';
+        showToast('Música ceremonial silenciada');
+      } else {
+        masterGain.gain.linearRampToValueAtTime(0.45, audioCtx.currentTime + 1.5);
+        isAudioPlaying = true;
+        audioIcon.textContent = '🔔';
+        audioText.textContent = 'Sonido Activo';
+        playCeremonialBell();
+        showToast('Frecuencias ancestrales activadas (108 Hz)');
+      }
+    }
+
+    audioToggle.addEventListener('click', toggleAudio);
+
+    function updatePointerPos(clientX, clientY) {
+      const rect = obsidianCanvas.getBoundingClientRect();
+      pointer.prevX = pointer.x;
+      pointer.prevY = pointer.y;
+      pointer.x = clientX - rect.left;
+      pointer.y = clientY - rect.top;
+      
+      const dx = pointer.x - pointer.prevX;
+      const dy = pointer.y - pointer.prevY;
+      pointer.speed = Math.min(15, Math.hypot(dx, dy));
+      pointer.active = true;
+    }
+
+    obsidianCanvas.addEventListener('mousemove', (e) => {
+      updatePointerPos(e.clientX, e.clientY);
+    });
+
+    obsidianCanvas.addEventListener('mouseleave', () => {
+      pointer.active = false;
+    });
+
+    obsidianCanvas.addEventListener('touchstart', (e) => {
+      if (e.touches.length > 0) {
+        updatePointerPos(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: true });
+
+    obsidianCanvas.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 0) {
+        updatePointerPos(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: true });
+
+    obsidianCanvas.addEventListener('touchend', () => {
+      pointer.active = false;
+    });
+
+    // Speed & Density Controls
+    speedRange.addEventListener('input', (e) => {
+      vortexSpeed = parseFloat(e.target.value);
+    });
+
+    densityRange.addEventListener('input', (e) => {
+      smokeDensity = parseFloat(e.target.value);
+    });
+
+    function consultOracle() {
+      playOracleRevealSound();
+
+      // Pick random Toltec card
+      const randomIndex = Math.floor(Math.random() * toltecCards.length);
+      const card = toltecCards[randomIndex];
+
+      oracleGlyph.textContent = card.glyph;
+      oracleTitle.textContent = card.name;
+      oracleSubtitle.textContent = card.sub;
+      oracleText.textContent = `"${card.text}"`;
+
+      // Show overlay with transition
+      oracleOverlay.classList.remove('pointer-events-none');
+      oracleOverlay.classList.remove('opacity-0');
+      oracleOverlay.classList.add('opacity-100');
+
+      showToast(`Visión revelada: ${card.name}`);
+    }
+
+    function closeOracle() {
+      oracleOverlay.classList.add('opacity-0');
+      oracleOverlay.classList.add('pointer-events-none');
+      oracleOverlay.classList.remove('opacity-100');
+    }
+
+    consultBtn.addEventListener('click', consultOracle);
+    mirrorFrame.addEventListener('click', (e) => {
+      // If clicking inside the mirror while closed, reveal oracle
+      if (oracleOverlay.classList.contains('pointer-events-none')) {
+        consultOracle();
+      }
+    });
+
+    closeOracleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeOracle();
+    });
+
+    function showToast(msg) {
+      toastBox.textContent = msg;
+      toastBox.classList.remove('opacity-0');
+      toastBox.classList.add('opacity-100');
+      setTimeout(() => {
+        toastBox.classList.remove('opacity-100');
+        toastBox.classList.add('opacity-0');
+      }, 2500);
+    }
+
+    let animationTime = 0;
+
+    function renderObsidianMirror() {
+      // 1. Clear background
+      ctx.clearRect(0, 0, width, height);
+
+      // Save canvas state for circular clipping
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      ctx.clip();
+
+      // Base: Deep black obsidian foundation
+      const baseGrad = ctx.createRadialGradient(
+        centerX, centerY * 0.8, 10,
+        centerX, centerY, radius
+      );
+      baseGrad.addColorStop(0, '#100e12');
+      baseGrad.addColorStop(0.5, '#070608');
+      baseGrad.addColorStop(1, '#020203');
+      ctx.fillStyle = baseGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      // Dynamic central cosmic eye
+      animationTime += 0.015 * vortexSpeed;
+
+      // Draw dynamic concentric nebula vortex spirals
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      for (let ring = 1; ring <= 4; ring++) {
+        ctx.rotate((animationTime * 0.2) / ring);
+        ctx.beginPath();
+        ctx.arc(0, 0, (radius / 4) * ring, 0, Math.PI * 1.5);
+        ctx.strokeStyle = ring % 2 === 0 ? 'rgba(212, 175, 55, 0.05)' : 'rgba(100, 110, 140, 0.04)';
+        ctx.lineWidth = 12 * smokeDensity;
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // Render smoke tendrils
+      for (let i = 0; i < smokeTendrils.length; i++) {
+        smokeTendrils[i].update();
+        smokeTendrils[i].draw(ctx);
+      }
+
+      // Render swirling cosmic stars and golden dust
+      for (let i = 0; i < cosmicStars.length; i++) {
+        cosmicStars[i].update(animationTime);
+        cosmicStars[i].draw(ctx);
+      }
+
+      // Pointer interactive ripples
+      if (pointer.active && pointer.speed > 0.2) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(pointer.x, pointer.y, 25 + pointer.speed * 2, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 215, 120, 0.08)';
+        ctx.shadowColor = '#f59e0b';
+        ctx.shadowBlur = 15;
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // Glass specular sheen & curvature illusion of dark polished stone
+      const sheenGrad = ctx.createLinearGradient(0, 0, width, height);
+      sheenGrad.addColorStop(0, 'rgba(255, 255, 255, 0.12)');
+      sheenGrad.addColorStop(0.3, 'rgba(255, 255, 255, 0.03)');
+      sheenGrad.addColorStop(0.7, 'rgba(0, 0, 0, 0.2)');
+      sheenGrad.addColorStop(1, 'rgba(0, 0, 0, 0.7)');
+
+      ctx.fillStyle = sheenGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      // Deep edge vignette inside the obsidian
+      const edgeVignette = ctx.createRadialGradient(
+        centerX, centerY, radius * 0.7,
+        centerX, centerY, radius
+      );
+      edgeVignette.addColorStop(0, 'rgba(0, 0, 0, 0)');
+      edgeVignette.addColorStop(1, 'rgba(0, 0, 0, 0.85)');
+      ctx.fillStyle = edgeVignette;
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.restore(); // Restore circular clip
+    }
+
+    // Main animation loop
+    function animate() {
+      renderObsidianMirror();
+      updateCandlePlume(ctxLeft, candleSmokeLeftParticles, candleLeft.clientWidth, candleLeft.clientHeight);
+      updateCandlePlume(ctxRight, candleSmokeRightParticles, candleRight.clientWidth, candleRight.clientHeight);
+      requestAnimationFrame(animate);
+    }
+
+    window.onload = function() {
+      resizeCanvases();
+      animate();
+    };
+  </script>
+</body>
+</html>
