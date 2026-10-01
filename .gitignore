@@ -1,9 +1,10 @@
 # Node dependencies
 node_modules/
+**/node_modules/
 package-lock.json
 
 # Production build
-dist/
+**/dist/
 build/
 
 # Environment files

@@ -350,29 +350,45 @@ export function ExperiencesHub() {
 
   const activeExp = EXPERIENCES_LIST.find((e) => e.id === selectedExpId);
 
+  const handleLaunchExperience = (expId: string) => {
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (AudioCtx) {
+        const temp = new AudioCtx();
+        if (temp.state === "suspended") temp.resume().catch(() => {});
+      }
+    } catch (e) {}
+    setSelectedExpId(expId);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   // Renderizar la experiencia activa
   if (activeExp && activeExp.status === "active") {
     return (
       <div className="relative min-h-screen bg-[#0A0704] text-[#F8F9FA]">
         {/* Barra Flotante de Retorno */}
-        <header className="sticky top-0 z-50 w-full px-4 py-3 bg-[#140D07]/90 backdrop-blur-xl border-b border-amber-500/20 flex items-center justify-between shadow-xl">
-          <div className="flex items-center gap-3">
+        <header className="sticky top-0 z-50 w-full px-3 sm:px-6 py-2.5 sm:py-3 bg-[#140D07]/95 backdrop-blur-xl border-b border-amber-500/20 flex items-center justify-between shadow-xl">
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
-              onClick={() => setSelectedExpId(null)}
-              className="px-4 py-2 rounded-full border border-amber-400/40 bg-gradient-to-r from-amber-600/30 to-amber-700/30 text-amber-200 hover:border-amber-400 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer text-xs sm:text-sm font-semibold shadow-md"
+              onClick={() => {
+                setSelectedExpId(null);
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-amber-400/40 bg-gradient-to-r from-amber-600/30 to-amber-700/30 text-amber-200 hover:border-amber-400 hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer text-xs sm:text-sm font-semibold shadow-md shrink-0"
             >
               <ArrowLeft size={16} />
-              <span>Volver al Catálogo (20)</span>
+              <span className="hidden sm:inline">Volver al Catálogo (20)</span>
+              <span className="sm:hidden">Catálogo (20)</span>
             </button>
 
-            <div className="hidden sm:flex items-center gap-2 text-xs text-stone-300">
-              <span className="font-mono text-amber-400">EXP {String(activeExp.num).padStart(2, "0")}</span>
-              <span>·</span>
-              <span className="font-sacred font-bold text-white">{activeExp.title}</span>
+            <div className="flex items-center gap-1.5 sm:gap-2 text-xs text-stone-300 truncate">
+              <span className="font-mono text-amber-400 shrink-0">EXP {String(activeExp.num).padStart(2, "0")}</span>
+              <span className="hidden xs:inline">·</span>
+              <span className="font-sacred font-bold text-white truncate">{activeExp.title}</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-amber-300 border border-amber-400/25 bg-amber-400/10 px-3 py-1 rounded-full">
+          <div className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-amber-300 border border-amber-400/25 bg-amber-400/10 px-2.5 sm:px-3 py-1 rounded-full shrink-0">
             <Sparkles size={13} />
             <span className="hidden md:inline">Experiencia Mística Activa</span>
             <span className="md:hidden">Activa</span>
@@ -382,32 +398,32 @@ export function ExperiencesHub() {
         {/* Componente de la Experiencia */}
         <main className="w-full">
           {activeExp.num === 1 && (
-            <div className="py-6">
+            <div className="py-4 sm:py-6">
               <ArchangelPortal />
             </div>
           )}
           {activeExp.num === 2 && (
-            <div className="py-6 px-4 sm:px-8">
+            <div className="py-4 sm:py-6 px-2 sm:px-8">
               <ChakraEnergyMap />
             </div>
           )}
           {activeExp.num === 3 && (
-            <div className="py-6 px-4 sm:px-8">
+            <div className="py-4 sm:py-6 px-2 sm:px-8">
               <SolfeggioCymaticsTuner />
             </div>
           )}
           {activeExp.num === 18 && (
-            <div className="py-6 px-4 sm:px-8">
+            <div className="py-4 sm:py-6 px-2 sm:px-8">
               <TibetanBowlsSanctuary />
             </div>
           )}
           {activeExp.num === 19 && (
-            <div className="w-full h-[calc(100vh-65px)]">
+            <div className="w-full h-[calc(100vh-65px)] overflow-hidden">
               <SomaticRainstick />
             </div>
           )}
           {activeExp.num === 20 && (
-            <div className="w-full h-[calc(100vh-65px)] bg-[#030202]">
+            <div className="w-full h-[calc(100vh-65px)] bg-[#030202] overflow-hidden">
               <iframe
                 src="./espejo_de_obsidiana.html"
                 title="Espejo de Obsidiana"
@@ -489,7 +505,7 @@ export function ExperiencesHub() {
                 transition={{ duration: 0.2 }}
                 onClick={() => {
                   if (isReady) {
-                    setSelectedExpId(exp.id);
+                    handleLaunchExperience(exp.id);
                   } else {
                     setPreviewModalExp(exp);
                   }

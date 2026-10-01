@@ -72,7 +72,31 @@ export function SomaticRainstick() {
     // 1.2 Iniciar sensores nativos de inmediato
     startSensors();
 
-    // 1.3 Desbloquear motor de audio en el primer contacto táctil o movimiento
+    // 1.3 Soporte de cursor/ratón para Computadoras de Escritorio (Desktop Fallback)
+    const handlePointerMove = (e: PointerEvent) => {
+      // Si el dispositivo NO tiene acelerómetro físico (o es desktop), controlar por posición de mouse
+      if (!physicsRef.current.hasSensor) {
+        const normX = (e.clientX / window.innerWidth - 0.5) * 2; // -1 a 1
+        const normY = (e.clientY / window.innerHeight - 0.5) * 2;
+        physicsRef.current.gx = normX * 1.85;
+        physicsRef.current.gy = 0.5 + normY * 0.35;
+        physicsRef.current.tiltAngle = normX * 40;
+
+        if (audioCtxRef.current && audioCtxRef.current.state === "suspended") {
+          audioCtxRef.current.resume().catch(() => {});
+        }
+
+        if (Math.abs(normX) > 0.08) {
+          setSensorInfo(`Inclinación PC: ${Math.round(normX * 40)}°`);
+        } else {
+          setSensorInfo("Mueve el cursor para inclinar el palo");
+        }
+      }
+    };
+
+    window.addEventListener("pointermove", handlePointerMove);
+
+    // 1.4 Desbloquear motor de audio en el primer contacto táctil o clic
     const tryUnlockAudio = () => {
       initAudio();
       window.removeEventListener("touchstart", tryUnlockAudio);
@@ -83,6 +107,7 @@ export function SomaticRainstick() {
     window.addEventListener("pointerdown", tryUnlockAudio, { passive: true });
 
     return () => {
+      window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("touchstart", tryUnlockAudio);
       window.removeEventListener("pointerdown", tryUnlockAudio);
     };
@@ -226,42 +251,56 @@ export function SomaticRainstick() {
 
     let animId: number;
 
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+    let chamberPadding = 18;
+    let chamberX = chamberPadding;
+    let chamberY = 60;
+    let chamberWidth = 320;
+    let chamberHeight = 500;
+    let pins: ObstaclePin[] = [];
+
+    const rebuildChamberAndPins = (w: number, h: number) => {
+      chamberPadding = Math.max(14, Math.min(24, w * 0.04));
+      chamberX = chamberPadding;
+      chamberY = 56;
+      chamberWidth = Math.max(200, w - chamberPadding * 2);
+      chamberHeight = Math.max(260, h - 110);
+
+      // Espinas internas en distribución orgánica reactiva a las dimensiones
+      pins = [];
+      const cols = w < 480 ? 5 : 7;
+      const rows = h < 600 ? 7 : 10;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const px = chamberX + (c + 0.5) * (chamberWidth / cols) + (r % 2 === 0 ? -8 : 8);
+          const py = chamberY + (r + 1) * (chamberHeight / (rows + 1));
+          pins.push({
+            x: px,
+            y: py,
+            radius: 3.2,
+            pulse: 0
+          });
+        }
+      }
     };
+
+    const resize = () => {
+      const parent = canvas.parentElement;
+      const w = parent && parent.clientWidth > 50 ? parent.clientWidth : window.innerWidth;
+      const h = parent && parent.clientHeight > 50 ? parent.clientHeight : window.innerHeight;
+      canvas.width = w;
+      canvas.height = h;
+      rebuildChamberAndPins(w, h);
+    };
+
     resize();
     window.addEventListener("resize", resize);
-
-    const chamberPadding = 18;
-    const chamberX = chamberPadding;
-    const chamberY = 60;
-    const chamberWidth = canvas.width - chamberPadding * 2;
-    const chamberHeight = canvas.height - 120;
-
-    // 54 espinas internas en distribución orgánica
-    const pins: ObstaclePin[] = [];
-    const cols = 6;
-    const rows = 9;
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        const px = chamberX + (c + 0.5) * (chamberWidth / cols) + (r % 2 === 0 ? -10 : 10);
-        const py = chamberY + (r + 1) * (chamberHeight / (rows + 1));
-        pins.push({
-          x: px,
-          y: py,
-          radius: 3.2,
-          pulse: 0
-        });
-      }
-    }
 
     // 150 semillas de cuarzo y acacia dorada
     const numParticles = 150;
     const particles: Particle[] = [];
     for (let i = 0; i < numParticles; i++) {
       particles.push({
-        x: chamberX + 30 + Math.random() * (chamberWidth - 60),
+        x: chamberX + 30 + Math.random() * Math.max(20, chamberWidth - 60),
         y: chamberY + chamberHeight * 0.4 + Math.random() * (chamberHeight * 0.3),
         vx: (Math.random() - 0.5) * 1.5,
         vy: (Math.random() - 0.5) * 1.5,
@@ -269,6 +308,38 @@ export function SomaticRainstick() {
         color: Math.random() > 0.35 ? "#F5D77F" : "#D4AF37"
       });
     }
+
+    // Interacción táctil / clic para agitar las semillas
+    const handleCanvasShake = (e: MouseEvent | TouchEvent) => {
+      let clientX = 0;
+      let clientY = 0;
+      if ("touches" in e && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      } else if ("clientX" in e) {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+
+      const rect = canvas.getBoundingClientRect();
+      const localX = clientX - rect.left;
+      const localY = clientY - rect.top;
+
+      // Impulso a las partículas cercanas
+      particles.forEach((p) => {
+        const dx = p.x - localX;
+        const dy = p.y - localY;
+        const dist = Math.hypot(dx, dy);
+        if (dist < 180) {
+          const force = (1 - dist / 180) * 4.5;
+          p.vx += (dx / (dist || 1)) * force + (Math.random() - 0.5) * 2;
+          p.vy += (dy / (dist || 1)) * force - 2.5;
+        }
+      });
+      playZenDrop(1.2);
+    };
+
+    canvas.addEventListener("pointerdown", handleCanvasShake as any);
 
     const loop = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -440,11 +511,12 @@ export function SomaticRainstick() {
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", resize);
+      canvas.removeEventListener("pointerdown", handleCanvasShake as any);
     };
   }, [isMuted, playZenDrop]);
 
   return (
-    <div className="relative w-full h-screen bg-[#120904] overflow-hidden select-none touch-none">
+    <div className="relative w-full h-full min-h-[500px] bg-[#120904] overflow-hidden select-none touch-none">
       {/* Canvas del Palo de Lluvia */}
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
 
@@ -466,10 +538,10 @@ export function SomaticRainstick() {
       </div>
 
       {/* Indicador Guía Inferior */}
-      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-40 pointer-events-none text-center">
-        <div className="flex items-center gap-2 px-5 py-2 rounded-full border border-amber-400/20 bg-[#120904]/85 backdrop-blur-lg text-xs text-amber-200/90 font-sans tracking-wider shadow-lg">
-          <Sparkles size={14} className="text-amber-400" />
-          <span>Balanza de izquierda a derecha ↔ Acústica Zen</span>
+      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-40 pointer-events-none text-center w-full px-4">
+        <div className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 rounded-full border border-amber-400/20 bg-[#120904]/85 backdrop-blur-lg text-[11px] sm:text-xs text-amber-200/90 font-sans tracking-wider shadow-lg">
+          <Sparkles size={14} className="text-amber-400 shrink-0" />
+          <span>Balanza tu celular o mueve el cursor en PC &bull; Toca para agitar semillas</span>
         </div>
       </div>
     </div>

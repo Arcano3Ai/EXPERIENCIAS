@@ -310,29 +310,68 @@ export function TibetanBowlsSanctuary() {
   }, [isMuted]);
 
   const stopSingingRim = useCallback(() => {
+    setIsSinging(false);
     if (frictionGainRef.current && audioCtxRef.current) {
       const now = audioCtxRef.current.currentTime;
-      frictionGainRef.current.gain.linearRampToValueAtTime(0.0001, now + 2.5); // Desvanecimiento sereno
+      const gainToFade = frictionGainRef.current;
+      const osc1ToStop = frictionOscRef.current;
+      const osc2ToStop = frictionOsc2Ref.current;
+      frictionGainRef.current = null;
+      frictionOscRef.current = null;
+      frictionOsc2Ref.current = null;
+
+      gainToFade.gain.linearRampToValueAtTime(0.0001, now + 1.8);
       setTimeout(() => {
-        if (frictionOscRef.current) {
-          try {
-            frictionOscRef.current.stop();
-            frictionOscRef.current.disconnect();
-          } catch (e) {}
-          frictionOscRef.current = null;
-        }
-        if (frictionOsc2Ref.current) {
-          try {
-            frictionOsc2Ref.current.stop();
-            frictionOsc2Ref.current.disconnect();
-          } catch (e) {}
-          frictionOsc2Ref.current = null;
-        }
-        frictionGainRef.current = null;
-        setIsSinging(false);
-      }, 2600);
+        try {
+          if (osc1ToStop) {
+            osc1ToStop.stop();
+            osc1ToStop.disconnect();
+          }
+          if (osc2ToStop) {
+            osc2ToStop.stop();
+            osc2ToStop.disconnect();
+          }
+          gainToFade.disconnect();
+        } catch (e) {}
+      }, 1900);
     }
   }, []);
+
+  // Manejo de pulsación en el canvas (Toque corto: golpe con mazo; Mantener presionado: cantar borde)
+  const pointerDownTimerRef = useRef<number | null>(null);
+  const isHoldingRef = useRef<boolean>(false);
+
+  const handleCanvasPointerDown = () => {
+    isHoldingRef.current = false;
+    pointerDownTimerRef.current = window.setTimeout(() => {
+      isHoldingRef.current = true;
+      startSingingRim(selectedBowl);
+    }, 240);
+  };
+
+  const handleCanvasPointerUp = () => {
+    if (pointerDownTimerRef.current) {
+      clearTimeout(pointerDownTimerRef.current);
+      pointerDownTimerRef.current = null;
+    }
+    if (isHoldingRef.current) {
+      stopSingingRim();
+      isHoldingRef.current = false;
+    } else {
+      strikeBowl(selectedBowl, 0.85);
+    }
+  };
+
+  const handleCanvasPointerLeave = () => {
+    if (pointerDownTimerRef.current) {
+      clearTimeout(pointerDownTimerRef.current);
+      pointerDownTimerRef.current = null;
+    }
+    if (isHoldingRef.current) {
+      stopSingingRim();
+      isHoldingRef.current = false;
+    }
+  };
 
   // Baño Sonoro Automático (Secuencia Sagrada)
   const toggleSoundBath = () => {
@@ -508,10 +547,9 @@ export function TibetanBowlsSanctuary() {
               ref={canvasRef}
               width={420}
               height={420}
-              onClick={() => strikeBowl(selectedBowl, 0.9)}
-              onPointerDown={() => startSingingRim(selectedBowl)}
-              onPointerUp={stopSingingRim}
-              onPointerLeave={stopSingingRim}
+              onPointerDown={handleCanvasPointerDown}
+              onPointerUp={handleCanvasPointerUp}
+              onPointerLeave={handleCanvasPointerLeave}
               className="w-full h-full cursor-pointer touch-none filter drop-shadow-[0_15px_30px_rgba(0,0,0,0.8)]"
               title="Toca para golpear con el mazo, o mantén presionado para hacerlo cantar"
             />

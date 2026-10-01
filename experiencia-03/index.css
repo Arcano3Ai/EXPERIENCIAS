@@ -1,0 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --gold-primary: #D4AF37;
+  --gold-bright: #F5D77F;
+  --obsidian-black: #040508;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #040508;
+  background-image: 
+    radial-gradient(ellipse at 50% 0%, rgba(14, 165, 233, 0.25) 0%, rgba(30, 27, 75, 0.3) 35%, transparent 70%),
+    radial-gradient(circle at 10% 40%, rgba(212, 175, 55, 0.1) 0%, transparent 40%),
+    radial-gradient(circle at 90% 40%, rgba(168, 85, 247, 0.12) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 70%, rgba(2, 132, 199, 0.2) 0%, transparent 60%);
+  background-attachment: fixed;
+  color: #F8F9FA;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  overflow-x: hidden;
+}
+
+.font-editorial {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+.font-sacred {
+  font-family: 'Cinzel', serif;
+}
