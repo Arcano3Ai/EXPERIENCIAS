@@ -31,12 +31,12 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          cd experiencia-19
+          cd experiencia-18
           npm install
 
-      - name: Build Experiencia 19
+      - name: Build Experiences Suite
         run: |
-          cd experiencia-19
+          cd experiencia-18
           npm run build
 
       - name: Setup Pages
@@ -45,7 +45,7 @@ jobs:
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './experiencia-19/dist'
+          path: './experiencia-18/dist'
 
       - name: Deploy to GitHub Pages
         id: deployment
