@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Volume2, VolumeX, Compass, Music, Sparkles } from "lucide-react";
+import { Volume2, VolumeX, Compass, Sparkles } from "lucide-react";
 
 declare global {
   interface Window {
@@ -25,8 +25,9 @@ interface ObstaclePin {
   pulse: number;
 }
 
-// Escala Pentatónica Armónica Sagrada (432 Hz y 528 Hz Pitagórica / Sonido de Viento y Bambú)
-const HARMONIC_NOTES = [432, 528, 648, 720, 864, 1056, 1296];
+// Notas Cálidas de Bambú y Agua Zen (Tonos graves y medios de relajación profunda, libres de agudos chillones)
+// Afinación en 432 Hz: 216 Hz (vibración terrenal), 288 Hz, 324 Hz, 360 Hz, 432 Hz, 528 Hz
+const ZEN_NOTES = [216, 288, 324, 360, 432, 528];
 
 export function SomaticRainstick() {
   const [isMuted, setIsMuted] = useState<boolean>(false);
@@ -34,11 +35,8 @@ export function SomaticRainstick() {
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
-  const gainNodeRef = useRef<GainNode | null>(null);
-  const harmonicGainRef = useRef<GainNode | null>(null);
-  const filterNodeRef = useRef<BiquadFilterNode | null>(null);
-  const noiseSourceRef = useRef<AudioBufferSourceNode | null>(null);
-  const harmonicOscRef = useRef<OscillatorNode | null>(null);
+  const droneOscRef = useRef<OscillatorNode | null>(null);
+  const droneGainRef = useRef<GainNode | null>(null);
   const lastNoteTimeRef = useRef<number>(0);
 
   // Vector de Gravedad e Inclinación en useRef (Lectura a 60 FPS sin pausas)
@@ -102,8 +100,8 @@ export function SomaticRainstick() {
         const radBeta = (beta * Math.PI) / 180;
 
         // Impulso suave y reactivo
-        physicsRef.current.gx = Math.sin(radGamma) * 2.0;
-        physicsRef.current.gy = Math.sin(radBeta) * 1.3;
+        physicsRef.current.gx = Math.sin(radGamma) * 1.9;
+        physicsRef.current.gy = Math.sin(radBeta) * 1.2;
         physicsRef.current.tiltAngle = gamma;
 
         if (audioCtxRef.current && audioCtxRef.current.state === "suspended") {
@@ -124,8 +122,8 @@ export function SomaticRainstick() {
         physicsRef.current.hasSensor = true;
         const gx = -(acc.x || 0) / 9.8;
         const gy = (acc.y || 0) / 9.8;
-        physicsRef.current.gx = gx * 1.8;
-        physicsRef.current.gy = gy * 1.3;
+        physicsRef.current.gx = gx * 1.7;
+        physicsRef.current.gy = gy * 1.2;
 
         if (audioCtxRef.current && audioCtxRef.current.state === "suspended") {
           audioCtxRef.current.resume().catch(() => {});
@@ -138,7 +136,7 @@ export function SomaticRainstick() {
   };
 
   // ============================================================
-  // 2. MOTOR ACÚSTICO TENUE Y ARMÓNICO (Web Audio API)
+  // 2. MOTOR ACÚSTICO SUAVE Y LIGERO (CERO RUIDO ESTRIDENTE)
   // ============================================================
   const initAudio = () => {
     if (audioCtxRef.current && audioCtxRef.current.state === "running") return;
@@ -150,67 +148,37 @@ export function SomaticRainstick() {
         ctx.resume().catch(() => {});
       }
 
-      // 2.1 Ruido Marrón Sedoso (Lluvia de fondo muy tenue, sin siseo estridente)
-      const bufferSize = ctx.sampleRate * 2.5;
-      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-      const data = buffer.getChannelData(0);
+      // Resonador de Bambú Hueco Suave a 216 Hz (Vibración de calidez y paz)
+      const osc = ctx.createOscillator();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(216, ctx.currentTime);
 
-      let lastOut = 0.0;
-      for (let i = 0; i < bufferSize; i++) {
-        const white = Math.random() * 2 - 1;
-        // Filtro browniano (integración suave de ruido para textura cálida de seda)
-        lastOut = (lastOut + 0.02 * white) / 1.02;
-        data[i] = lastOut * 0.45;
-      }
-
-      const noiseSource = ctx.createBufferSource();
-      noiseSource.buffer = buffer;
-      noiseSource.loop = true;
-
-      // Filtro Lowpass suave a 520 Hz (elimina todo siseo metálico agudo)
+      // Filtro Lowpass a 260 Hz para garantizar cero brillo o estridencia
       const filter = ctx.createBiquadFilter();
       filter.type = "lowpass";
-      filter.frequency.setValueAtTime(520, ctx.currentTime);
-      filter.Q.setValueAtTime(1.2, ctx.currentTime);
-      filterNodeRef.current = filter;
+      filter.frequency.setValueAtTime(260, ctx.currentTime);
 
-      // Ganancia master tenue para la lluvia
       const gain = ctx.createGain();
       gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-      gainNodeRef.current = gain;
+      droneGainRef.current = gain;
 
-      noiseSource.connect(filter);
+      osc.connect(filter);
       filter.connect(gain);
       gain.connect(ctx.destination);
 
-      noiseSource.start();
-      noiseSourceRef.current = noiseSource;
-
-      // 2.2 Resonador Armónico Sagrado a 432 Hz (Fondo Etereo de Meditación)
-      const oscHarmonic = ctx.createOscillator();
-      oscHarmonic.type = "sine";
-      oscHarmonic.frequency.setValueAtTime(432, ctx.currentTime);
-
-      const harmGain = ctx.createGain();
-      harmGain.gain.setValueAtTime(0.0001, ctx.currentTime);
-      harmonicGainRef.current = harmGain;
-
-      oscHarmonic.connect(harmGain);
-      harmGain.connect(ctx.destination);
-
-      oscHarmonic.start();
-      harmonicOscRef.current = oscHarmonic;
+      osc.start();
+      droneOscRef.current = osc;
     } catch (e) {
-      console.warn("Audio init warning:", e);
+      console.warn("Audio init:", e);
     }
   };
 
-  // 2.3 Gotas / Semillas Armónicas en Escala Pentatónica (Sonido Cristalino y Suave)
-  const playHarmonicSeedNote = useCallback((force: number) => {
+  // Gotas de Bambú y Agua Zen Suave (Sin clics secos ni frecuencias chillonas)
+  const playZenDrop = useCallback((force: number) => {
     if (!audioCtxRef.current || isMuted) return;
     const now = Date.now();
-    // Limitar cadencia para que no se sature de notas (máximo 1 cada 50ms)
-    if (now - lastNoteTimeRef.current < 50) return;
+    // Espaciamiento para que nunca se amontonen los sonidos (máx 1 cada 85ms)
+    if (now - lastNoteTimeRef.current < 85) return;
     lastNoteTimeRef.current = now;
 
     try {
@@ -218,24 +186,32 @@ export function SomaticRainstick() {
       if (ctx.state === "suspended") ctx.resume().catch(() => {});
 
       const osc = ctx.createOscillator();
-      const clickGain = ctx.createGain();
+      const noteGain = ctx.createGain();
 
-      // Seleccionar una nota de la escala armónica sagrada
-      const noteFreq = HARMONIC_NOTES[Math.floor(Math.random() * HARMONIC_NOTES.length)];
+      // Filtro para suavizar y redondear la nota
+      const filter = ctx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(550, ctx.currentTime);
+
+      // Escoger una nota tibia de la escala Zen
+      const baseFreq = ZEN_NOTES[Math.floor(Math.random() * ZEN_NOTES.length)];
       osc.type = "sine";
-      osc.frequency.setValueAtTime(noteFreq, ctx.currentTime);
+      // Caída sutil de frecuencia emulando el "plop" orgánico de una gota de agua sobre bambú
+      osc.frequency.setValueAtTime(baseFreq + 15, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(baseFreq, ctx.currentTime + 0.06);
 
-      // Volumen tenue y aterciopelado
-      const vol = Math.min(Math.max(force * 0.018, 0.004), 0.028);
-      clickGain.gain.setValueAtTime(0.0001, ctx.currentTime);
-      clickGain.gain.linearRampToValueAtTime(vol, ctx.currentTime + 0.008);
-      clickGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.08);
+      // Volumen sumamente ligero y suave (0.008 a 0.02)
+      const vol = Math.min(Math.max(force * 0.012, 0.006), 0.018);
+      noteGain.gain.setValueAtTime(0.0001, ctx.currentTime);
+      noteGain.gain.linearRampToValueAtTime(vol, ctx.currentTime + 0.014); // Ataque suave de 14ms
+      noteGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.16); // Desvanecimiento sereno
 
-      osc.connect(clickGain);
-      clickGain.connect(ctx.destination);
+      osc.connect(filter);
+      filter.connect(noteGain);
+      noteGain.connect(ctx.destination);
 
       osc.start();
-      osc.stop(ctx.currentTime + 0.085);
+      osc.stop(ctx.currentTime + 0.18);
     } catch (e) {}
   }, [isMuted]);
 
@@ -280,8 +256,8 @@ export function SomaticRainstick() {
       }
     }
 
-    // 160 semillas de cuarzo y acacia dorada
-    const numParticles = 160;
+    // 150 semillas de cuarzo y acacia dorada
+    const numParticles = 150;
     const particles: Particle[] = [];
     for (let i = 0; i < numParticles; i++) {
       particles.push({
@@ -368,8 +344,8 @@ export function SomaticRainstick() {
       let totalSpeed = 0;
 
       particles.forEach((p) => {
-        p.vx += gx * 0.44;
-        p.vy += gy * 0.40;
+        p.vx += gx * 0.42;
+        p.vy += gy * 0.38;
 
         p.vx *= 0.965;
         p.vy *= 0.965;
@@ -385,11 +361,11 @@ export function SomaticRainstick() {
         if (p.x < minX) {
           p.x = minX;
           p.vx = -p.vx * 0.42;
-          if (Math.abs(p.vx) > 0.9) playHarmonicSeedNote(Math.abs(p.vx));
+          if (Math.abs(p.vx) > 0.9) playZenDrop(Math.abs(p.vx));
         } else if (p.x > maxX) {
           p.x = maxX;
           p.vx = -p.vx * 0.42;
-          if (Math.abs(p.vx) > 0.9) playHarmonicSeedNote(Math.abs(p.vx));
+          if (Math.abs(p.vx) > 0.9) playZenDrop(Math.abs(p.vx));
         }
 
         if (p.y < minY) {
@@ -398,7 +374,7 @@ export function SomaticRainstick() {
         } else if (p.y > maxY) {
           p.y = maxY;
           p.vy = -p.vy * 0.38;
-          if (Math.abs(p.vy) > 0.9) playHarmonicSeedNote(Math.abs(p.vy));
+          if (Math.abs(p.vy) > 0.9) playZenDrop(Math.abs(p.vy));
         }
 
         // Colisión con espinas
@@ -421,7 +397,7 @@ export function SomaticRainstick() {
             pin.pulse = 1.0;
             const force = Math.hypot(p.vx, p.vy);
             if (force > 0.6) {
-              playHarmonicSeedNote(force);
+              playZenDrop(force);
             }
           }
         });
@@ -447,30 +423,13 @@ export function SomaticRainstick() {
 
       ctx.restore();
 
-      // ==========================================
-      // MODULACIÓN ACÚSTICA TENUE Y ARMÓNICA
-      // ==========================================
+      // Modulación del Zumbido Cálido de Fondo (Muy tenue y ligero)
       const avgSpeed = totalSpeed / numParticles;
-      if (audioCtxRef.current && !isMuted) {
+      if (audioCtxRef.current && droneGainRef.current && !isMuted) {
         const ctxAudio = audioCtxRef.current;
-
-        // 1. Ganancia de Lluvia Marrón: Muy suave y tenue (máximo 0.08)
-        if (gainNodeRef.current) {
-          const targetGain = Math.min(Math.max((avgSpeed - 0.08) * 0.08, 0.0001), 0.08);
-          gainNodeRef.current.gain.setTargetAtTime(targetGain, ctxAudio.currentTime, 0.08);
-        }
-
-        // 2. Resonancia Armónica Sagrada a 432 Hz: Acompaña el balanceo
-        if (harmonicGainRef.current) {
-          const targetHarm = Math.min(Math.max((avgSpeed - 0.06) * 0.025, 0.0001), 0.03);
-          harmonicGainRef.current.gain.setTargetAtTime(targetHarm, ctxAudio.currentTime, 0.1);
-        }
-
-        // 3. Filtro acústico cálido
-        if (filterNodeRef.current) {
-          const targetFreq = 420 + Math.min(avgSpeed * 220, 680);
-          filterNodeRef.current.frequency.setTargetAtTime(targetFreq, ctxAudio.currentTime, 0.1);
-        }
+        // Volumen máximo 0.012 (extremadamente suave, como una respiración)
+        const targetDrone = Math.min(Math.max((avgSpeed - 0.06) * 0.012, 0.0001), 0.012);
+        droneGainRef.current.gain.setTargetAtTime(targetDrone, ctxAudio.currentTime, 0.12);
       }
 
       animId = requestAnimationFrame(loop);
@@ -482,7 +441,7 @@ export function SomaticRainstick() {
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", resize);
     };
-  }, [isMuted, playHarmonicSeedNote]);
+  }, [isMuted, playZenDrop]);
 
   return (
     <div className="relative w-full h-screen bg-[#120904] overflow-hidden select-none touch-none">
@@ -510,7 +469,7 @@ export function SomaticRainstick() {
       <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-40 pointer-events-none text-center">
         <div className="flex items-center gap-2 px-5 py-2 rounded-full border border-amber-400/20 bg-[#120904]/85 backdrop-blur-lg text-xs text-amber-200/90 font-sans tracking-wider shadow-lg">
           <Sparkles size={14} className="text-amber-400" />
-          <span>Balanza de izquierda a derecha ↔ Acústica Sagrada</span>
+          <span>Balanza de izquierda a derecha ↔ Acústica Zen</span>
         </div>
       </div>
     </div>
