@@ -3,15 +3,12 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Sparkles,
-  Smartphone,
   Volume2,
   VolumeX,
   X,
   Compass,
-  Droplets,
   HelpCircle,
-  Activity
+  Smartphone
 } from "lucide-react";
 
 declare global {
@@ -38,21 +35,23 @@ interface ObstaclePin {
 }
 
 export function SomaticRainstick({ onExit }: { onExit?: () => void }) {
-  // Estados de UI y control
-  const [hasStarted, setHasStarted] = useState<boolean>(false);
+  // Estados de UI y control (Inicia activo por defecto)
+  const [hasStarted, setHasStarted] = useState<boolean>(true);
+  const [needsIosTap, setNeedsIosTap] = useState<boolean>(false);
+  const [isAudioUnlocked, setIsAudioUnlocked] = useState<boolean>(false);
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [showHelper, setShowHelper] = useState<boolean>(false);
-  const [sensorDebug, setSensorDebug] = useState<string>("Esperando inicio...");
-  const [activityState, setActivityState] = useState<string>("En reposo");
+  const [sensorDebug, setSensorDebug] = useState<string>("Conectando giroscopio...");
+  const [activityState, setActivityState] = useState<string>("Sintonizando gravedad...");
 
-  // Referencias para evitar re-renderizados que reinicien el Canvas o el Audio
+  // Referencias para evitar re-renderizados del Canvas o Audio
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
   const filterNodeRef = useRef<BiquadFilterNode | null>(null);
   const noiseSourceRef = useRef<AudioBufferSourceNode | null>(null);
 
-  // Vector de Gravedad e Inclinación en useRef (Lectura directa a 60 FPS sin resets de React)
+  // Vector de Gravedad e Inclinación en useRef (Lectura directa a 60 FPS)
   const orientationRef = useRef<{
     beta: number;   // Inclinación frontal (-180 a 180)
     gamma: number;  // Inclinación lateral (-90 a 90)
@@ -63,93 +62,112 @@ export function SomaticRainstick({ onExit }: { onExit?: () => void }) {
     beta: 75,
     gamma: 0,
     gx: 0,
-    gy: 0.85,
+    gy: 0.9,
     hasMotion: false
   });
 
   // ============================================================
-  // 1. GATEKEEPER & INICIALIZACIÓN DE SENSORES NATIVOS
+  // 1. AUTO-ACTIVACIÓN INMEDIATA DEL GIROSCOPIO Y SENSORES
   // ============================================================
-  const requestSensorPermissions = async () => {
-    // 1.1 Iniciar y reactivar AudioContext en el gesto del usuario
-    try {
-      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-      const ctx = new AudioContextClass();
-      audioCtxRef.current = ctx;
-      if (ctx.state === "suspended") {
-        await ctx.resume();
-      }
-      initRainstickAudio(ctx);
-    } catch (err) {
-      console.warn("AudioContext error:", err);
-    }
+  useEffect(() => {
+    // 1.1 Iniciar de inmediato los listeners nativos (Android, Chrome, Firefox)
+    startSensorListeners();
 
-    // 1.2 Solicitar permisos de giroscopio en iOS 13+
-    let granted = false;
+    // 1.2 Verificar si es iOS Safari que exige permiso explícito
     if (
       typeof DeviceOrientationEvent !== "undefined" &&
       typeof (DeviceOrientationEvent as any).requestPermission === "function"
     ) {
-      try {
-        const orientationPerm = await (DeviceOrientationEvent as any).requestPermission();
-        if (orientationPerm === "granted") granted = true;
-      } catch (e) {
-        console.warn("DeviceOrientation error en iOS:", e);
-      }
-    } else {
-      granted = true; // Android / Browsers modernos no requieren permiso explícito síncrono
+      // Intentar solicitarlo inmediatamente
+      (DeviceOrientationEvent as any)
+        .requestPermission()
+        .then((response: string) => {
+          if (response === "granted") {
+            setNeedsIosTap(false);
+          } else {
+            setNeedsIosTap(true);
+          }
+        })
+        .catch(() => {
+          // iOS bloqueó la llamada automática sin gesto: mostramos banner de un toque
+          setNeedsIosTap(true);
+        });
     }
 
-    if (
-      typeof DeviceMotionEvent !== "undefined" &&
-      typeof (DeviceMotionEvent as any).requestPermission === "function"
-    ) {
-      try {
-        await (DeviceMotionEvent as any).requestPermission();
-      } catch (e) {}
-    }
+    // 1.3 Desbloquear audio al primer toque o interacción
+    const unlockAudio = () => {
+      initAudio();
+      window.removeEventListener("touchstart", unlockAudio);
+      window.removeEventListener("click", unlockAudio);
+    };
 
-    // 1.3 Iniciar listeners de sensores físicos
-    startSensorListeners();
-    setHasStarted(true);
+    window.addEventListener("touchstart", unlockAudio, { passive: true });
+    window.addEventListener("click", unlockAudio, { passive: true });
 
+    // Telemetría
     if (typeof window !== "undefined" && typeof window.gtag === "function") {
       window.gtag("event", "start_experience", { experience_name: "Palo de Lluvia" });
     }
+
+    return () => {
+      window.removeEventListener("touchstart", unlockAudio);
+      window.removeEventListener("click", unlockAudio);
+    };
+  }, []);
+
+  // Función para iOS cuando requiere gesto de usuario para lanzar el diálogo del sistema
+  const handleIosPermissionTap = async () => {
+    try {
+      if (
+        typeof DeviceOrientationEvent !== "undefined" &&
+        typeof (DeviceOrientationEvent as any).requestPermission === "function"
+      ) {
+        const state = await (DeviceOrientationEvent as any).requestPermission();
+        if (state === "granted") {
+          setNeedsIosTap(false);
+          startSensorListeners();
+        }
+      }
+      if (
+        typeof DeviceMotionEvent !== "undefined" &&
+        typeof (DeviceMotionEvent as any).requestPermission === "function"
+      ) {
+        await (DeviceMotionEvent as any).requestPermission();
+      }
+    } catch (e) {
+      console.warn("Permiso iOS:", e);
+    }
+    initAudio();
+    setNeedsIosTap(false);
   };
 
   const startSensorListeners = () => {
-    // Escuchar Orientación del Dispositivo (Ángulos Beta y Gamma)
+    // Listener de Orientación (Ángulos Beta y Gamma)
     const handleOrientation = (e: DeviceOrientationEvent) => {
       if (e.beta !== null && e.gamma !== null) {
         orientationRef.current.beta = e.beta;
         orientationRef.current.gamma = e.gamma;
         orientationRef.current.hasMotion = true;
 
-        // Conversión a vector de gravedad normalizado
         const radBeta = (e.beta * Math.PI) / 180;
         const radGamma = (e.gamma * Math.PI) / 180;
 
-        // Eje X: inclinación lateral
-        orientationRef.current.gx = Math.sin(radGamma) * 1.1;
-        // Eje Y: si el teléfono está vertical (beta=90) gravedad es hacia abajo; si está invertido (beta=-90) hacia arriba
-        orientationRef.current.gy = Math.sin(radBeta) * 1.1;
+        orientationRef.current.gx = Math.sin(radGamma) * 1.25;
+        orientationRef.current.gy = Math.sin(radBeta) * 1.25;
 
         setSensorDebug(`β: ${Math.round(e.beta)}° | γ: ${Math.round(e.gamma)}°`);
       }
     };
 
-    // Escuchar Movimiento/Acelerómetro directo (Respaldo físico ultra-preciso)
+    // Listener de Movimiento / Acelerómetro (Respaldo directo de gravedad)
     const handleMotion = (e: DeviceMotionEvent) => {
       const acc = e.accelerationIncludingGravity;
       if (acc && acc.x !== null && acc.y !== null) {
         orientationRef.current.hasMotion = true;
-        // Normalización de m/s^2 a vector unitario (-9.8 a 9.8)
-        // En Android vs iOS el signo de Y puede variar, adaptamos a coordenadas de pantalla
         const gx = -(acc.x || 0) / 9.8;
         const gy = (acc.y || 0) / 9.8;
-        orientationRef.current.gx = Math.max(-1.5, Math.min(1.5, gx));
-        orientationRef.current.gy = Math.max(-1.5, Math.min(1.5, gy));
+        orientationRef.current.gx = Math.max(-1.5, Math.min(1.5, gx * 1.2));
+        orientationRef.current.gy = Math.max(-1.5, Math.min(1.5, gy * 1.2));
       }
     };
 
@@ -160,13 +178,20 @@ export function SomaticRainstick({ onExit }: { onExit?: () => void }) {
   // ============================================================
   // 2. MOTOR DE AUDIO GRANULAR REACTIVO (Web Audio API)
   // ============================================================
-  const initRainstickAudio = (ctx: AudioContext) => {
+  const initAudio = () => {
+    if (audioCtxRef.current && audioCtxRef.current.state === "running") return;
     try {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      const ctx = new AudioContextClass();
+      audioCtxRef.current = ctx;
+      if (ctx.state === "suspended") {
+        ctx.resume();
+      }
+
       const bufferSize = ctx.sampleRate * 2.0;
       const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const data = buffer.getChannelData(0);
 
-      // Generar ruido de textura de semillas de cactus/cuarzo
       let b0 = 0, b1 = 0, b2 = 0;
       for (let i = 0; i < bufferSize; i++) {
         const white = Math.random() * 2 - 1;
@@ -174,18 +199,16 @@ export function SomaticRainstick({ onExit }: { onExit?: () => void }) {
         b1 = 0.99332 * b1 + white * 0.075;
         b2 = 0.96900 * b2 + white * 0.153;
         let pink = b0 + b1 + b2 + white * 0.3;
-        // Micro-granos percusivos
         if (Math.random() < 0.035) {
-          pink += (Math.random() * 2 - 1) * 2.0;
+          pink += (Math.random() * 2 - 1) * 2.2;
         }
-        data[i] = pink * 0.16;
+        data[i] = pink * 0.18;
       }
 
       const noiseSource = ctx.createBufferSource();
       noiseSource.buffer = buffer;
       noiseSource.loop = true;
 
-      // Filtro pasa banda emulando resonancia del tubo de bambú
       const filter = ctx.createBiquadFilter();
       filter.type = "bandpass";
       filter.frequency.setValueAtTime(850, ctx.currentTime);
@@ -202,23 +225,25 @@ export function SomaticRainstick({ onExit }: { onExit?: () => void }) {
 
       noiseSource.start();
       noiseSourceRef.current = noiseSource;
+      setIsAudioUnlocked(true);
     } catch (e) {
-      console.warn("Audio init error:", e);
+      console.warn("Audio init warning:", e);
     }
   };
 
-  // Reproducir click percusivo sutil cuando una semilla colisiona contra espinas
   const playImpactSound = useCallback((force: number) => {
-    if (!audioCtxRef.current || isMuted || !hasStarted) return;
+    if (!audioCtxRef.current || isMuted) return;
     try {
       const ctx = audioCtxRef.current;
+      if (ctx.state === "suspended") ctx.resume();
+
       const osc = ctx.createOscillator();
       const clickGain = ctx.createGain();
 
       osc.type = "sine";
       osc.frequency.setValueAtTime(1200 + Math.random() * 1800, ctx.currentTime);
 
-      const vol = Math.min(Math.max(force * 0.03, 0.005), 0.05);
+      const vol = Math.min(Math.max(force * 0.035, 0.006), 0.06);
       clickGain.gain.setValueAtTime(vol, ctx.currentTime);
       clickGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.02);
 
@@ -228,14 +253,12 @@ export function SomaticRainstick({ onExit }: { onExit?: () => void }) {
       osc.start();
       osc.stop(ctx.currentTime + 0.025);
     } catch (e) {}
-  }, [isMuted, hasStarted]);
+  }, [isMuted]);
 
   // ============================================================
-  // 3. FÍSICA VISUAL CONTINUA EN CANVAS 2D A 60 FPS
+  // 3. FÍSICA VISUAL PERSISTENTE EN CANVAS 2D A 60 FPS
   // ============================================================
   useEffect(() => {
-    if (!hasStarted) return;
-
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -276,7 +299,7 @@ export function SomaticRainstick({ onExit }: { onExit?: () => void }) {
     for (let i = 0; i < numParticles; i++) {
       particles.push({
         x: tubeX + 25 + Math.random() * (tubeWidth - 50),
-        y: tubeY + tubeHeight * 0.35 + Math.random() * (tubeHeight * 0.3), // Distribución inicial en el centro
+        y: tubeY + tubeHeight * 0.35 + Math.random() * (tubeHeight * 0.3),
         vx: (Math.random() - 0.5) * 1.5,
         vy: (Math.random() - 0.5) * 1.5,
         radius: 2.2 + Math.random() * 2.5,
@@ -285,7 +308,6 @@ export function SomaticRainstick({ onExit }: { onExit?: () => void }) {
       });
     }
 
-    // Bucle Principal de Render y Física (Persistente, sin resets)
     const loop = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -304,12 +326,11 @@ export function SomaticRainstick({ onExit }: { onExit?: () => void }) {
       ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Leer Vector de Gravedad del Giroscopio (Directo desde la referencia)
       const gx = orientationRef.current.gx;
       const gy = orientationRef.current.gy;
 
       // ------------------------------------------
-      // DIBUJAR TUBO DE BAMBÚ SAGRADO
+      // DIBUJAR TUBO DE BAMBÚ
       // ------------------------------------------
       ctx.save();
       ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
@@ -339,7 +360,7 @@ export function SomaticRainstick({ onExit }: { onExit?: () => void }) {
       ctx.roundRect(tubeX + 8, tubeY + 8, tubeWidth - 16, tubeHeight - 16, 20);
       ctx.fill();
 
-      // Anillos y grabados tribales del bambú
+      // Anillos del bambú
       ctx.strokeStyle = "rgba(212, 175, 55, 0.45)";
       ctx.lineWidth = 1.8;
       const rings = 10;
@@ -379,11 +400,9 @@ export function SomaticRainstick({ onExit }: { onExit?: () => void }) {
       let totalSpeed = 0;
 
       particles.forEach((p) => {
-        // Aplicar gravedad física del sensor
-        p.vx += gx * 0.42;
-        p.vy += gy * 0.42;
+        p.vx += gx * 0.45;
+        p.vy += gy * 0.45;
 
-        // Fricción
         p.vx *= 0.965;
         p.vy *= 0.965;
 
@@ -395,7 +414,6 @@ export function SomaticRainstick({ onExit }: { onExit?: () => void }) {
         const minY = tubeY + 12 + p.radius;
         const maxY = tubeY + tubeHeight - 12 - p.radius;
 
-        // Rebotes en paredes
         if (p.x < minX) {
           p.x = minX;
           p.vx = -p.vx * 0.42;
@@ -414,7 +432,6 @@ export function SomaticRainstick({ onExit }: { onExit?: () => void }) {
           if (Math.abs(p.vy) > 0.8) playImpactSound(Math.abs(p.vy));
         }
 
-        // Colisión con espinas
         pins.forEach((pin) => {
           const dx = p.x - pin.x;
           const dy = p.y - pin.y;
@@ -439,7 +456,6 @@ export function SomaticRainstick({ onExit }: { onExit?: () => void }) {
           }
         });
 
-        // Dibujar semilla
         ctx.fillStyle = p.color;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
@@ -461,25 +477,23 @@ export function SomaticRainstick({ onExit }: { onExit?: () => void }) {
       ctx.restore();
 
       // ------------------------------------------
-      // MODULACIÓN DE AUDIO POR VELOCIDAD REAL DE SEMILLAS
+      // AUDIO REACTIVO
       // ------------------------------------------
       const avgSpeed = totalSpeed / numParticles;
       if (gainNodeRef.current && filterNodeRef.current && audioCtxRef.current && !isMuted) {
         const ctxAudio = audioCtxRef.current;
-        // Volumen reactivo: silencia en reposo, suena como lluvia al fluir
-        const targetGain = Math.min(Math.max((avgSpeed - 0.08) * 0.22, 0.0001), 0.32);
+        const targetGain = Math.min(Math.max((avgSpeed - 0.08) * 0.24, 0.0001), 0.35);
         gainNodeRef.current.gain.setTargetAtTime(targetGain, ctxAudio.currentTime, 0.05);
 
-        // Frecuencia acústica modulada por la inclinación y velocidad
-        const targetFreq = 600 + Math.min(avgSpeed * 500, 1800);
+        const targetFreq = 600 + Math.min(avgSpeed * 520, 1850);
         filterNodeRef.current.frequency.setTargetAtTime(targetFreq, ctxAudio.currentTime, 0.08);
 
         if (avgSpeed > 0.8) {
-          setActivityState("Cascada de Semillas en Movimiento");
+          setActivityState("Torrente de Semillas");
         } else if (avgSpeed > 0.2) {
           setActivityState("Llovizna Mística");
         } else {
-          setActivityState("Semillas en Reposo (Inclina tu celular)");
+          setActivityState("Reposo (Inclina tu celular)");
         }
       }
 
@@ -492,164 +506,111 @@ export function SomaticRainstick({ onExit }: { onExit?: () => void }) {
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", resize);
     };
-  }, [hasStarted, isMuted, playImpactSound]);
-
-  // Soporte de emulación exclusiva para Desktop con el mouse
-  const handlePointerDown = (e: React.PointerEvent) => {
-    // Si ya detectamos sensores reales de movimiento, no usamos mouse
-    if (orientationRef.current.hasMotion) return;
-    const dy = (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
-    const dx = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
-    orientationRef.current.gx = dx * 1.2;
-    orientationRef.current.gy = dy * 1.2;
-  };
-
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (orientationRef.current.hasMotion) return;
-    if (e.buttons > 0) {
-      const dy = (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
-      const dx = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
-      orientationRef.current.gx = dx * 1.2;
-      orientationRef.current.gy = dy * 1.2;
-    }
-  };
+  }, [isMuted, playImpactSound]);
 
   return (
-    <div
-      className="relative w-full h-screen bg-[#120904] overflow-hidden select-none touch-none"
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-    >
+    <div className="relative w-full h-screen bg-[#120904] overflow-hidden select-none touch-none">
       {/* ============================================================ */}
-      {/* PANTALLA GATEKEEPER                                          */}
+      {/* MODAL DE AUTORIZACIÓN AUTOMÁTICA EN IOS (SI LO REQUIERE)     */}
       {/* ============================================================ */}
       <AnimatePresence>
-        {!hasStarted && (
+        {needsIosTap && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0, scale: 0.96 }}
-            transition={{ duration: 0.4 }}
-            className="absolute inset-0 z-50 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-[#1C1008]/98 via-[#120904]/99 to-[#080301] backdrop-blur-2xl"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            onClick={handleIosPermissionTap}
+            className="absolute top-16 inset-x-4 max-w-sm mx-auto z-50 p-4 rounded-2xl border-2 border-amber-400 bg-gradient-to-r from-[#A06B33] via-[#8C4024] to-[#5E3A1A] text-white shadow-[0_0_30px_rgba(212,175,55,0.6)] cursor-pointer flex items-center justify-between gap-3 animate-pulse"
           >
-            <div className="w-20 h-20 mb-6 rounded-3xl border border-amber-400/35 bg-gradient-to-tr from-amber-600/25 via-yellow-500/15 to-transparent flex items-center justify-center shadow-[0_0_40px_rgba(212,175,55,0.3)]">
-              <Droplets className="w-9 h-9 text-amber-300 animate-pulse" />
+            <div className="flex items-center gap-3">
+              <Smartphone size={22} className="text-amber-200" />
+              <div>
+                <p className="text-xs font-bold font-sacred tracking-wider uppercase">
+                  Activar Giroscopio
+                </p>
+                <p className="text-[11px] text-stone-200">
+                  Toca aquí para permitir el movimiento
+                </p>
+              </div>
             </div>
-
-            <span className="text-xs uppercase tracking-[0.35em] text-amber-400 font-semibold font-sans mb-2">
-              Instrumento Chamánico Táctil
+            <span className="text-xs font-bold bg-white/20 px-3 py-1 rounded-full">
+              Permitir
             </span>
-
-            <h1 className="text-3xl sm:text-5xl font-sacred font-bold text-white tracking-wide max-w-lg mb-4">
-              Palo de Lluvia Somático
-            </h1>
-
-            <p className="max-w-md text-sm sm:text-base text-stone-300 font-sans leading-relaxed mb-8">
-              Tu teléfono se convierte en un palo de lluvia de bambú y cuarzo.
-              Al <strong>inclinar o girar físicamente tu celular</strong>, las semillas caen y producen el sonido ancestral de la lluvia.
-            </p>
-
-            <button
-              onClick={requestSensorPermissions}
-              className="px-8 py-4 rounded-full border-2 border-[#D4AF37] bg-gradient-to-r from-[#A06B33] via-[#8C4024] to-[#5E3A1A] text-white font-sacred font-bold tracking-widest text-sm sm:text-base uppercase shadow-[0_0_35px_rgba(212,175,55,0.45)] hover:shadow-[0_0_50px_rgba(245,215,127,0.7)] hover:scale-105 active:scale-95 transition-all flex items-center gap-3 cursor-pointer"
-            >
-              <Smartphone size={20} className="text-amber-200" />
-              <span>Sostener y Conectar Giroscopio</span>
-            </button>
-
-            <div className="mt-8 flex items-center gap-4 text-xs text-amber-300/80 font-sans">
-              <span className="flex items-center gap-1.5">
-                <Compass size={14} /> Control Puro por Inclinación
-              </span>
-              <span>·</span>
-              <span className="flex items-center gap-1.5">
-                <Activity size={14} /> Audio Reactivo en Tiempo Real
-              </span>
-            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* ============================================================ */}
-      {/* CANVAS DEL INSTRUMENTO                                       */}
+      {/* CANVAS DEL INSTRUMENTO (INICIA DE INMEDIATO)                 */}
       {/* ============================================================ */}
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
 
       {/* ============================================================ */}
       {/* HUD SUPERIOR MINIMALISTA                                     */}
       {/* ============================================================ */}
-      {hasStarted && (
-        <>
-          <div className="absolute top-4 left-4 right-4 z-40 flex items-center justify-between pointer-events-none">
-            {/* Sensor Live Feed */}
-            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/10 bg-[#120904]/75 backdrop-blur-md text-xs text-stone-300 pointer-events-auto">
-              <Compass size={14} className="text-amber-400 animate-spin-slow" />
-              <span className="font-mono">{sensorDebug}</span>
-            </div>
+      <div className="absolute top-4 left-4 right-4 z-40 flex items-center justify-between pointer-events-none">
+        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/10 bg-[#120904]/75 backdrop-blur-md text-xs text-stone-300 pointer-events-auto">
+          <Compass size={14} className="text-amber-400" />
+          <span className="font-mono">{sensorDebug}</span>
+        </div>
 
-            {/* Acciones */}
-            <div className="flex items-center gap-2 pointer-events-auto">
-              <button
-                onClick={() => setIsMuted(!isMuted)}
-                className="w-10 h-10 rounded-full border border-white/10 bg-[#120904]/75 backdrop-blur-md flex items-center justify-center text-stone-300 hover:text-white transition-all cursor-pointer"
-              >
-                {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} className="text-amber-300" />}
+        <div className="flex items-center gap-2 pointer-events-auto">
+          <button
+            onClick={() => setIsMuted(!isMuted)}
+            className="w-10 h-10 rounded-full border border-white/10 bg-[#120904]/75 backdrop-blur-md flex items-center justify-center text-stone-300 hover:text-white transition-all cursor-pointer"
+          >
+            {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} className="text-amber-300" />}
+          </button>
+
+          <button
+            onClick={() => setShowHelper(!showHelper)}
+            className="w-10 h-10 rounded-full border border-white/10 bg-[#120904]/75 backdrop-blur-md flex items-center justify-center text-stone-300 hover:text-white transition-all cursor-pointer"
+          >
+            <HelpCircle size={18} />
+          </button>
+
+          {onExit && (
+            <button
+              onClick={onExit}
+              className="w-10 h-10 rounded-full border border-white/10 bg-[#120904]/75 backdrop-blur-md flex items-center justify-center text-stone-300 hover:text-white transition-all cursor-pointer"
+            >
+              <X size={18} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Indicador de Estado Somático Inferior */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 pointer-events-none text-center">
+        <div className="px-5 py-2 rounded-full border border-amber-400/25 bg-[#120904]/85 backdrop-blur-lg text-xs text-amber-200/90 font-sans tracking-wider shadow-lg">
+          {activityState}
+        </div>
+      </div>
+
+      {/* Modal de Ayuda */}
+      <AnimatePresence>
+        {showHelper && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 15 }}
+            className="absolute inset-x-4 top-20 max-w-sm mx-auto z-50 p-5 rounded-2xl border border-amber-400/35 bg-[#1C1008]/95 backdrop-blur-2xl shadow-2xl space-y-3 text-xs text-stone-300"
+          >
+            <div className="flex items-center justify-between text-amber-300 font-sacred font-bold text-sm">
+              <span>Palo de Lluvia por Inclinación</span>
+              <button onClick={() => setShowHelper(false)} className="cursor-pointer">
+                <X size={16} />
               </button>
-
-              <button
-                onClick={() => setShowHelper(!showHelper)}
-                className="w-10 h-10 rounded-full border border-white/10 bg-[#120904]/75 backdrop-blur-md flex items-center justify-center text-stone-300 hover:text-white transition-all cursor-pointer"
-              >
-                <HelpCircle size={18} />
-              </button>
-
-              {onExit && (
-                <button
-                  onClick={onExit}
-                  className="w-10 h-10 rounded-full border border-white/10 bg-[#120904]/75 backdrop-blur-md flex items-center justify-center text-stone-300 hover:text-white transition-all cursor-pointer"
-                >
-                  <X size={18} />
-                </button>
-              )}
             </div>
-          </div>
-
-          {/* Indicador de Estado Somático Inferior */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 pointer-events-none text-center">
-            <div className="px-5 py-2 rounded-full border border-amber-400/25 bg-[#120904]/85 backdrop-blur-lg text-xs text-amber-200/90 font-sans tracking-wider shadow-lg">
-              {activityState}
-            </div>
-          </div>
-
-          {/* Modal de Ayuda */}
-          <AnimatePresence>
-            {showHelper && (
-              <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 15 }}
-                className="absolute inset-x-4 top-20 max-w-sm mx-auto z-50 p-5 rounded-2xl border border-amber-400/35 bg-[#1C1008]/95 backdrop-blur-2xl shadow-2xl space-y-3 text-xs text-stone-300"
-              >
-                <div className="flex items-center justify-between text-amber-300 font-sacred font-bold text-sm">
-                  <span>Palo de Lluvia por Inclinación</span>
-                  <button onClick={() => setShowHelper(false)} className="cursor-pointer">
-                    <X size={16} />
-                  </button>
-                </div>
-                <p>
-                  <strong>Giroscopio Nativo:</strong> Sostén tu celular y voltéalo despacio boca abajo o hacia los lados.
-                </p>
-                <p>
-                  Las semillas responden únicamente a la gravedad de tu inclinación física, chocando contra las espinas de bambú.
-                </p>
-                <p className="text-[11px] text-amber-300/80 italic pt-1 border-t border-white/10">
-                  Usa audífonos para una inmersión acústica binaural profunda.
-                </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </>
-      )}
+            <p>
+              El instrumento está activo directamente con el sensor de tu teléfono.
+            </p>
+            <p>
+              Inclínalo despacio o voltéalo boca abajo para que las semillas caigan con gravedad real.
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
