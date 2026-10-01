@@ -225,8 +225,8 @@ export function SomaticRainstick() {
       osc.frequency.setValueAtTime(baseFreq + 15, ctx.currentTime);
       osc.frequency.exponentialRampToValueAtTime(baseFreq, ctx.currentTime + 0.06);
 
-      // Volumen sumamente ligero y suave (0.008 a 0.02)
-      const vol = Math.min(Math.max(force * 0.012, 0.006), 0.018);
+      // Volumen optimizado (+20% de amplitud: 0.0072 a 0.0216)
+      const vol = Math.min(Math.max(force * 0.0144, 0.0072), 0.0216);
       noteGain.gain.setValueAtTime(0.0001, ctx.currentTime);
       noteGain.gain.linearRampToValueAtTime(vol, ctx.currentTime + 0.014); // Ataque suave de 14ms
       noteGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.16); // Desvanecimiento sereno
@@ -498,8 +498,8 @@ export function SomaticRainstick() {
       const avgSpeed = totalSpeed / numParticles;
       if (audioCtxRef.current && droneGainRef.current && !isMuted) {
         const ctxAudio = audioCtxRef.current;
-        // Volumen máximo 0.012 (extremadamente suave, como una respiración)
-        const targetDrone = Math.min(Math.max((avgSpeed - 0.06) * 0.012, 0.0001), 0.012);
+        // Volumen optimizado (+20%: hasta 0.0144)
+        const targetDrone = Math.min(Math.max((avgSpeed - 0.06) * 0.0144, 0.0001), 0.0144);
         droneGainRef.current.gain.setTargetAtTime(targetDrone, ctxAudio.currentTime, 0.12);
       }
 
