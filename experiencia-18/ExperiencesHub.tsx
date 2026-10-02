@@ -25,12 +25,26 @@ import {
   Maximize2
 } from "lucide-react";
 
-// Importar Experiencias Listas
-import { TibetanBowlsSanctuary } from "./TibetanBowlsSanctuary";
-import { SomaticRainstick } from "../experiencia-19/SomaticRainstick";
+// Importar las 20 Experiencias Místicas
+import ArchangelApp from "../experiencia-01/App";
 import { ChakraEnergyMap } from "../experiencia-02/ChakraEnergyMap";
 import { SolfeggioCymaticsTuner } from "../experiencia-03/SolfeggioCymaticsTuner";
-import ArchangelApp from "../experiencia-01/App";
+import { FemaleArchetypesWheel } from "../experiencia-04/FemaleArchetypesWheel";
+import { SmudgingAltar } from "../experiencia-05/SmudgingAltar";
+import { CandleSanctuary } from "../experiencia-06/CandleSanctuary";
+import { MetatronOracle } from "../experiencia-07/MetatronOracle";
+import { AkashicRecords } from "../experiencia-08/AkashicRecords";
+import { QuartzPendulum } from "../experiencia-09/QuartzPendulum";
+import { MajorArcanaTarot } from "../experiencia-10/MajorArcanaTarot";
+import { FlowerOfLife } from "../experiencia-11/FlowerOfLife";
+import { ZenGarden } from "../experiencia-12/ZenGarden";
+import { CrystalElixirs } from "../experiencia-13/CrystalElixirs";
+import { AstralChart } from "../experiencia-14/AstralChart";
+import { PranicBreathing } from "../experiencia-15/PranicBreathing";
+import { ChartresLabyrinth } from "../experiencia-16/ChartresLabyrinth";
+import { KoshiChimes } from "../experiencia-17/KoshiChimes";
+import { TibetanBowlsSanctuary } from "./TibetanBowlsSanctuary";
+import { SomaticRainstick } from "../experiencia-19/SomaticRainstick";
 
 export interface ExperienceDef {
   num: number;
@@ -100,7 +114,7 @@ export const EXPERIENCES_LIST: ExperienceDef[] = [
     colorHex: "#EC4899",
     glowHex: "rgba(236, 72, 153, 0.4)",
     icon: "Moon",
-    status: "preview",
+    status: "active",
     description: "Navegación interactiva por los cuatro arquetipos: Doncella, Madre, Hechicera y Anciana, enlazados con las fases lunares y guías botánicas.",
     keyFeature: "Mandala cíclico somático, aceites esenciales y diario lunar."
   },
@@ -114,7 +128,7 @@ export const EXPERIENCES_LIST: ExperienceDef[] = [
     colorHex: "#F97316",
     glowHex: "rgba(249, 115, 22, 0.4)",
     icon: "Flame",
-    status: "preview",
+    status: "active",
     description: "Sahumador artesanal con física de humo volumétrico y selección de hierbas sagradas: Copal, Palo Santo, Salvia Blanca y Ruda para limpiar el aura.",
     keyFeature: "Simulación de brasas, oraciones de purificación y humo interactivo."
   },
@@ -128,7 +142,7 @@ export const EXPERIENCES_LIST: ExperienceDef[] = [
     colorHex: "#EAB308",
     glowHex: "rgba(234, 179, 8, 0.4)",
     icon: "Flame",
-    status: "preview",
+    status: "active",
     description: "Encendido virtual de velas con flama hiperrealista en Canvas. Selección de rayo cromático, consagración de decretos y ofrendas de intención.",
     keyFeature: "Flama viva con física de aire, pergamino de intenciones y sellado."
   },
@@ -142,7 +156,7 @@ export const EXPERIENCES_LIST: ExperienceDef[] = [
     colorHex: "#A855F7",
     glowHex: "rgba(168, 85, 247, 0.4)",
     icon: "Compass",
-    status: "preview",
+    status: "active",
     description: "Proyección geométrica interactiva de los 5 sólidos platónicos y activación de los 13 nodos celestes para consultas oraculares profundas.",
     keyFeature: "Geometría multidimensional, tirada oracular y códigos de luz."
   },
@@ -156,7 +170,7 @@ export const EXPERIENCES_LIST: ExperienceDef[] = [
     colorHex: "#6366F1",
     glowHex: "rgba(99, 102, 241, 0.4)",
     icon: "BookOpen",
-    status: "preview",
+    status: "active",
     description: "Templo etérico de introspección espiritual. Apertura mediante la Oración del Sendero y canalización guiada para explorar la misión del alma.",
     keyFeature: "Rito sagrado de apertura, consultas de propósito y libro etérico."
   },
@@ -170,7 +184,7 @@ export const EXPERIENCES_LIST: ExperienceDef[] = [
     colorHex: "#14B8A6",
     glowHex: "rgba(20, 184, 166, 0.4)",
     icon: "Compass",
-    status: "preview",
+    status: "active",
     description: "Simulación física de péndulo de cuarzo con oscilación armónica para calibración de respuestas sí/no y lectura de biométrico de Bovis.",
     keyFeature: "Física de péndulo en gravedad real, gráficos de calibración áurica."
   },
@@ -184,7 +198,7 @@ export const EXPERIENCES_LIST: ExperienceDef[] = [
     colorHex: "#D946EF",
     glowHex: "rgba(217, 70, 239, 0.4)",
     icon: "Layers",
-    status: "preview",
+    status: "active",
     description: "Mazo oracular interactivo de los 22 Arcanos Mayores con barajado 3D, tirada de la Cruz Céltica y revelación del camino iniciático.",
     keyFeature: "Animación de cartas con texturas doradas y canalización terapéutica."
   },
@@ -198,7 +212,7 @@ export const EXPERIENCES_LIST: ExperienceDef[] = [
     colorHex: "#F59E0B",
     glowHex: "rgba(245, 158, 11, 0.4)",
     icon: "Sparkles",
-    status: "preview",
+    status: "active",
     description: "Generador dinámico de mandalas fractales basados en la proporción áurea (Phi), la Semilla de la Vida y la Vesica Piscis.",
     keyFeature: "Control paramétrico de simetría, animación de espirales de Fibonacci."
   },
@@ -212,7 +226,7 @@ export const EXPERIENCES_LIST: ExperienceDef[] = [
     colorHex: "#84CC16",
     glowHex: "rgba(132, 204, 22, 0.4)",
     icon: "Droplets",
-    status: "preview",
+    status: "active",
     description: "Karesansui digital. Rastrilla patrones sobre arena sagrada, acomoda piedras de cuarzo y escucha el flujo de la serenidad mental.",
     keyFeature: "Textura de arena reactiva al trazo táctil, relajación profunda."
   },
@@ -226,7 +240,7 @@ export const EXPERIENCES_LIST: ExperienceDef[] = [
     colorHex: "#06B6D4",
     glowHex: "rgba(6, 182, 212, 0.4)",
     icon: "Sparkles",
-    status: "preview",
+    status: "active",
     description: "Alquimia mineral con amatista, selenita, cuarzo rosa y obsidiana. Aprende a crear elixires solares y lunares para armonizar el agua.",
     keyFeature: "Enciclopedia gemológica interactiva, activación con luz y sonido."
   },
@@ -240,7 +254,7 @@ export const EXPERIENCES_LIST: ExperienceDef[] = [
     colorHex: "#8B5CF6",
     glowHex: "rgba(139, 92, 246, 0.4)",
     icon: "Compass",
-    status: "preview",
+    status: "active",
     description: "Visualizador tridimensional de constelaciones zodiacales, casas astrológicas y alineación de planetas natales con la bóveda celeste.",
     keyFeature: "Rueda zodiacal interactiva, aspectos planetarios y tránsitos."
   },
@@ -254,7 +268,7 @@ export const EXPERIENCES_LIST: ExperienceDef[] = [
     colorHex: "#10B981",
     glowHex: "rgba(16, 185, 129, 0.4)",
     icon: "Wind",
-    status: "preview",
+    status: "active",
     description: "Guía somática con pacer geométrico esférico que expande y contrae la respiración en ciclos de coherencia cardíaca para calmar el sistema nervioso.",
     keyFeature: "Sincronizador visual de pulso, campana de transición y biofeedback."
   },
@@ -268,7 +282,7 @@ export const EXPERIENCES_LIST: ExperienceDef[] = [
     colorHex: "#D97706",
     glowHex: "rgba(217, 119, 6, 0.4)",
     icon: "Compass",
-    status: "preview",
+    status: "active",
     description: "Laberinto unicursal de Chartres. Recorre con tu dedo o cursor el sendero iniciático de desapego, recepción e integración.",
     keyFeature: "Música de arpa celta, caminata meditativa guiada y reflexión."
   },
@@ -282,7 +296,7 @@ export const EXPERIENCES_LIST: ExperienceDef[] = [
     colorHex: "#38BDF8",
     glowHex: "rgba(56, 189, 248, 0.4)",
     icon: "Wind",
-    status: "preview",
+    status: "active",
     description: "Cuatro campanas de bambú afinadas a los elementos: Terra (G C E F G C E G), Aqua, Aria e Ignis. Suenan suavemente con la brisa virtual.",
     keyFeature: "Física de badajo oscilante, sonido de viento de montaña y madera."
   },
@@ -410,6 +424,76 @@ export function ExperiencesHub() {
           {activeExp.num === 3 && (
             <div className="py-4 sm:py-6 px-2 sm:px-8">
               <SolfeggioCymaticsTuner />
+            </div>
+          )}
+          {activeExp.num === 4 && (
+            <div className="py-4 sm:py-6 px-2 sm:px-8">
+              <FemaleArchetypesWheel />
+            </div>
+          )}
+          {activeExp.num === 5 && (
+            <div className="py-4 sm:py-6 px-2 sm:px-8">
+              <SmudgingAltar />
+            </div>
+          )}
+          {activeExp.num === 6 && (
+            <div className="py-4 sm:py-6 px-2 sm:px-8">
+              <CandleSanctuary />
+            </div>
+          )}
+          {activeExp.num === 7 && (
+            <div className="py-4 sm:py-6 px-2 sm:px-8">
+              <MetatronOracle />
+            </div>
+          )}
+          {activeExp.num === 8 && (
+            <div className="py-4 sm:py-6 px-2 sm:px-8">
+              <AkashicRecords />
+            </div>
+          )}
+          {activeExp.num === 9 && (
+            <div className="py-4 sm:py-6 px-2 sm:px-8">
+              <QuartzPendulum />
+            </div>
+          )}
+          {activeExp.num === 10 && (
+            <div className="py-4 sm:py-6 px-2 sm:px-8">
+              <MajorArcanaTarot />
+            </div>
+          )}
+          {activeExp.num === 11 && (
+            <div className="py-4 sm:py-6 px-2 sm:px-8">
+              <FlowerOfLife />
+            </div>
+          )}
+          {activeExp.num === 12 && (
+            <div className="py-4 sm:py-6 px-2 sm:px-8">
+              <ZenGarden />
+            </div>
+          )}
+          {activeExp.num === 13 && (
+            <div className="py-4 sm:py-6 px-2 sm:px-8">
+              <CrystalElixirs />
+            </div>
+          )}
+          {activeExp.num === 14 && (
+            <div className="py-4 sm:py-6 px-2 sm:px-8">
+              <AstralChart />
+            </div>
+          )}
+          {activeExp.num === 15 && (
+            <div className="py-4 sm:py-6 px-2 sm:px-8">
+              <PranicBreathing />
+            </div>
+          )}
+          {activeExp.num === 16 && (
+            <div className="py-4 sm:py-6 px-2 sm:px-8">
+              <ChartresLabyrinth />
+            </div>
+          )}
+          {activeExp.num === 17 && (
+            <div className="py-4 sm:py-6 px-2 sm:px-8">
+              <KoshiChimes />
             </div>
           )}
           {activeExp.num === 18 && (

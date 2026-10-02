@@ -1,4 +1,4 @@
-name: Deploy Experiencia 19 to GitHub Pages
+name: Deploy Suite de 20 Experiencias to GitHub Pages
 
 on:
   push:
