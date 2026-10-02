@@ -693,15 +693,33 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
       playHarmonicTone(currentArchangel.frequencyHz);
     };
 
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        e.preventDefault();
+        updateMousePos(e.touches[0].clientX, e.touches[0].clientY);
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = size / rect.width;
+        const scaleY = size / rect.height;
+        const touchX = (e.touches[0].clientX - rect.left) * scaleX;
+        const touchY = (e.touches[0].clientY - rect.top) * scaleY;
+        triggerShockwave(touchX, touchY);
+        playHarmonicTone(currentArchangel.frequencyHz);
+      }
+    };
+
     const handleTouchMove = (e: TouchEvent) => {
-      if (e.touches.length > 0) updateMousePos(e.touches[0].clientX, e.touches[0].clientY);
+      if (e.touches.length > 0) {
+        e.preventDefault();
+        updateMousePos(e.touches[0].clientX, e.touches[0].clientY);
+      }
     };
     const handleTouchEnd = () => handleMouseLeave();
 
     canvas.addEventListener("mousemove", handleMouseMove);
     canvas.addEventListener("mouseleave", handleMouseLeave);
     canvas.addEventListener("click", handleCanvasClick);
-    canvas.addEventListener("touchmove", handleTouchMove, { passive: true });
+    canvas.addEventListener("touchstart", handleTouchStart, { passive: false });
+    canvas.addEventListener("touchmove", handleTouchMove, { passive: false });
     canvas.addEventListener("touchend", handleTouchEnd);
 
     const checkExternalWave = () => {
@@ -855,6 +873,7 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
       canvas.removeEventListener("mousemove", handleMouseMove);
       canvas.removeEventListener("mouseleave", handleMouseLeave);
       canvas.removeEventListener("click", handleCanvasClick);
+      canvas.removeEventListener("touchstart", handleTouchStart);
       canvas.removeEventListener("touchmove", handleTouchMove);
       canvas.removeEventListener("touchend", handleTouchEnd);
     };
@@ -941,11 +960,11 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
         {/* ============================================================ */}
         {/* BARRA DE HERRAMIENTAS ACÚSTICAS (Drone Solfeggio & Volumen) */}
         {/* ============================================================ */}
-        <div className="w-full max-w-2xl mb-6 px-4 py-2.5 rounded-full border border-white/10 bg-[#0C0E18]/80 backdrop-blur-md flex flex-wrap items-center justify-between gap-3 shadow-lg">
-          <div className="flex items-center gap-2">
+        <div className="w-full max-w-2xl mb-5 px-3.5 sm:px-5 py-2.5 rounded-2xl sm:rounded-full border border-white/10 bg-[#0C0E18]/80 backdrop-blur-md flex flex-col xs:flex-row items-center justify-between gap-2.5 sm:gap-3 shadow-lg">
+          <div className="flex items-center gap-2 w-full xs:w-auto justify-center">
             <button
               onClick={toggleDrone}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer ${
+              className={`w-full xs:w-auto justify-center flex items-center gap-2 px-3.5 py-2 sm:py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer ${
                 isDroneActive
                   ? "border border-amber-400 bg-amber-400/25 text-amber-200 shadow-[0_0_15px_rgba(212,175,55,0.4)]"
                   : "border border-white/15 bg-white/5 text-slate-300 hover:text-white hover:border-amber-400/30"
@@ -965,7 +984,7 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
             </button>
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-slate-400">
+          <div className="flex items-center gap-2 text-xs text-slate-400 w-full xs:w-auto justify-center">
             <span>Volumen</span>
             <input
               type="range"
@@ -974,7 +993,7 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
               step="0.01"
               value={droneVolume}
               onChange={(e) => setDroneVolume(parseFloat(e.target.value))}
-              className="w-20 accent-amber-400 h-1 bg-white/20 rounded-lg cursor-pointer"
+              className="w-28 xs:w-20 accent-amber-400 h-1.5 bg-white/20 rounded-lg cursor-pointer"
             />
           </div>
         </div>
@@ -982,7 +1001,7 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
         {/* ============================================================ */}
         {/* SELECTOR SUPERIOR: CÁPSULA DE LOS 7 ORBES DE CRISTAL         */}
         {/* ============================================================ */}
-        <div className="relative w-full max-w-3xl mb-7 px-3 sm:px-6 py-3.5 sm:py-4 rounded-full border border-white/[0.1] bg-[#0c0e18]/65 backdrop-blur-md shadow-[0_20px_40px_rgba(0,0,0,0.7)] flex items-center justify-between sm:justify-around gap-1 sm:gap-2 overflow-x-auto sm:overflow-visible">
+        <div className="relative w-full max-w-3xl mb-3 sm:mb-7 px-3 sm:px-6 py-3 sm:py-4 rounded-2xl sm:rounded-full border border-white/[0.1] bg-[#0c0e18]/70 backdrop-blur-md shadow-[0_15px_35px_rgba(0,0,0,0.6)] flex items-center justify-start sm:justify-around gap-2.5 sm:gap-2 overflow-x-auto sm:overflow-visible [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {ARCHANGELS.map((archangel) => {
             const isSelected = archangel.id === currentArchangel.id;
 
@@ -1007,9 +1026,9 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
 
                 {/* Orbe Esférico de Cristal 3D */}
                 <div
-                  className={`relative w-12 h-12 sm:w-13 sm:h-13 md:w-15 md:h-15 rounded-full flex items-center justify-center transition-all duration-500 overflow-hidden cursor-pointer ${
+                  className={`relative w-11 h-11 xs:w-12 xs:h-12 sm:w-13 sm:h-13 md:w-15 md:h-15 rounded-full flex items-center justify-center transition-all duration-500 overflow-hidden cursor-pointer shrink-0 ${
                     isSelected
-                      ? "scale-110 ring-2 ring-[#EAD8B2] shadow-[0_0_25px_rgba(212,175,55,0.65)]"
+                      ? "scale-110 ring-2 ring-[#EAD8B2] shadow-[0_0_22px_rgba(212,175,55,0.65)]"
                       : "opacity-75 hover:opacity-100 hover:scale-105"
                   }`}
                   style={{
@@ -1024,13 +1043,13 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
 
                   {/* Símbolo sagrado */}
                   <div className="relative z-10 text-white drop-shadow-[0_2px_5px_rgba(0,0,0,0.9)]">
-                    <SacredGlyph symbol={archangel.symbol} className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <SacredGlyph symbol={archangel.symbol} className="w-4 h-4 xs:w-5 xs:h-5 sm:w-6 sm:h-6" />
                   </div>
                 </div>
 
                 {/* Nombre y frecuencia */}
                 <span
-                  className="mt-1.5 text-[11px] sm:text-xs font-serif tracking-wider transition-colors duration-300"
+                  className="mt-1 text-[10px] sm:text-xs font-serif tracking-wider transition-colors duration-300"
                   style={{
                     color: isSelected ? archangel.colorHex : "#94A3B8",
                     fontWeight: isSelected ? 600 : 400
@@ -1038,12 +1057,17 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
                 >
                   {archangel.name}
                 </span>
-                <span className="text-[9px] font-mono text-stone-500">
+                <span className="text-[8.5px] sm:text-[9px] font-mono text-stone-500">
                   {archangel.frequencyHz} Hz
                 </span>
               </button>
             );
           })}
+        </div>
+
+        {/* Guía visual móvil para deslizar orbes */}
+        <div className="sm:hidden text-center -mt-1 mb-5 text-[10px] text-amber-300/60 uppercase tracking-widest flex items-center justify-center gap-1.5">
+          <span>✦ Desliza para explorar los 7 Arcángeles ✦</span>
         </div>
 
         {/* ============================================================ */}
@@ -1054,11 +1078,11 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
             onClick={handleOrbContainerClick}
             whileHover={{ scale: 1.015 }}
             whileTap={{ scale: 0.985 }}
-            className="group relative w-[290px] h-[290px] sm:w-[340px] sm:h-[340px] rounded-full p-2.5 bg-gradient-to-br from-amber-700 via-yellow-600 to-stone-900 shadow-2xl flex items-center justify-center cursor-pointer transition-all duration-700"
+            className="group relative w-[250px] h-[250px] xs:w-[285px] xs:h-[285px] sm:w-[340px] sm:h-[340px] rounded-full p-2.5 bg-gradient-to-br from-amber-700 via-yellow-600 to-stone-900 shadow-2xl flex items-center justify-center cursor-pointer transition-all duration-700"
             style={{
               boxShadow: `0 0 55px 12px ${currentArchangel.coreGlow.replace("0.85", "0.28")}`
             }}
-            title="Haz clic para dispersar las partículas con una onda de luz celestial"
+            title="Toca para dispersar las partículas con una onda de luz celestial"
           >
             {/* Anillo de Oro Viejo Biselado */}
             <div className="w-full h-full rounded-full p-2 bg-gradient-to-tr from-stone-950 via-[#18120b] to-[#2a1c0d] border-2 border-amber-500/60 shadow-[inset_0_0_25px_rgba(0,0,0,0.95)] flex items-center justify-center relative overflow-hidden">
@@ -1093,7 +1117,8 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
           {/* Subtítulo Guía Interactivo */}
           <p className="mt-3 text-xs sm:text-sm text-amber-200/80 tracking-widest uppercase flex items-center justify-center gap-2">
             <span className="animate-pulse text-amber-400">✧</span>
-            Haz clic para emitir la onda &bull; Pasa el cursor para apartar las partículas
+            <span className="sm:hidden">Toca o arrastra para crear ondas de choque armónicas</span>
+            <span className="hidden sm:inline">Haz clic para emitir la onda &bull; Pasa el cursor para apartar las partículas</span>
             <span className="animate-pulse text-amber-400">✧</span>
           </p>
         </div>
@@ -1101,12 +1126,12 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
         {/* ============================================================ */}
         {/* PESTAÑAS DE CONTENIDO: DECRETO | MEDITACIÓN | ATRIBUTOS      */}
         {/* ============================================================ */}
-        <div className="w-full max-w-2xl px-2 relative mb-6">
-          <div className="flex items-center justify-center gap-2 mb-3">
+        <div className="w-full max-w-2xl px-1 sm:px-2 relative mb-6">
+          <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-3.5 w-full">
             {[
-              { id: "decreto", label: "Decreto de Sintonía", icon: Sparkles },
-              { id: "meditacion", label: "Respiración Guiada", icon: Wind },
-              { id: "atributos", label: "Atributos Sagrados", icon: Info }
+              { id: "decreto", label: "Decreto", fullLabel: "Decreto de Sintonía", icon: Sparkles },
+              { id: "meditacion", label: "Respiración", fullLabel: "Respiración Guiada", icon: Wind },
+              { id: "atributos", label: "Atributos", fullLabel: "Atributos Sagrados", icon: Info }
             ].map((tab) => {
               const TabIcon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -1114,14 +1139,15 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as typeof activeTab)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold tracking-wider transition-all cursor-pointer ${
+                  className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl sm:rounded-full text-[11px] sm:text-xs font-semibold tracking-wide transition-all cursor-pointer ${
                     isActive
                       ? "border border-amber-400 bg-amber-400/20 text-amber-200 shadow-[0_0_15px_rgba(212,175,55,0.3)]"
                       : "border border-white/10 bg-white/5 text-slate-400 hover:text-white"
                   }`}
                 >
                   <TabIcon size={14} />
-                  <span>{tab.label}</span>
+                  <span className="sm:hidden">{tab.label}</span>
+                  <span className="hidden sm:inline">{tab.fullLabel}</span>
                 </button>
               );
             })}
@@ -1136,20 +1162,20 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 exit={{ opacity: 0, y: -12, filter: "blur(4px)" }}
                 transition={{ duration: 0.45 }}
-                className="relative rounded-2xl border border-[#D4AF37]/45 bg-[#0A0C16]/95 backdrop-blur-2xl px-6 sm:px-10 py-7 sm:py-8 shadow-[0_20px_60px_rgba(0,0,0,0.85)] overflow-hidden"
+                className="relative rounded-2xl border border-[#D4AF37]/45 bg-[#0A0C16]/95 backdrop-blur-2xl px-4 sm:px-10 py-5 sm:py-8 shadow-[0_20px_60px_rgba(0,0,0,0.85)] overflow-hidden"
                 style={{
                   boxShadow: `0 25px 65px -15px ${currentArchangel.coreGlow.replace("0.85", "0.2")}, inset 0 1px 1px rgba(212,175,55,0.25)`
                 }}
               >
                 {/* Símbolo en marca de agua decorativa */}
-                <div className="pointer-events-none absolute top-5 right-6 opacity-25 text-[#D4AF37]">
-                  <SacredGlyph symbol={currentArchangel.symbol} className="w-12 h-12" />
+                <div className="pointer-events-none absolute top-4 right-4 sm:top-5 sm:right-6 opacity-25 text-[#D4AF37]">
+                  <SacredGlyph symbol={currentArchangel.symbol} className="w-9 h-9 sm:w-12 sm:h-12" />
                 </div>
 
                 {/* Título de Canalización y Frecuencia */}
                 <div className="text-center mb-4">
                   <span
-                    className="inline-block text-[11px] font-sans tracking-widest uppercase px-3 py-0.5 rounded-full border mb-1.5 transition-colors duration-500 font-semibold"
+                    className="inline-block text-[10px] sm:text-[11px] font-sans tracking-widest uppercase px-3 py-0.5 rounded-full border mb-1.5 transition-colors duration-500 font-semibold"
                     style={{
                       color: currentArchangel.colorHex,
                       borderColor: `${currentArchangel.colorHex}50`,
@@ -1159,29 +1185,29 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
                     {currentArchangel.rayName} &bull; {currentArchangel.frequencyHz} Hz
                   </span>
 
-                  <h3 className="text-base sm:text-lg md:text-xl font-sacred tracking-[0.22em] text-[#E8D8BA] uppercase font-bold drop-shadow-sm">
+                  <h3 className="text-sm sm:text-lg md:text-xl font-sacred tracking-[0.18em] sm:tracking-[0.22em] text-[#E8D8BA] uppercase font-bold drop-shadow-sm">
                     {currentArchangel.title}
                   </h3>
                 </div>
 
                 {/* Sintonía con Nombre Personalizado */}
-                <div className="flex flex-wrap items-center justify-center gap-2 mb-5 text-xs">
+                <div className="flex flex-col xs:flex-row items-center justify-center gap-2 mb-4 text-xs">
                   <span className="text-slate-300 font-sans">Sintonizar con mi nombre:</span>
                   <input
                     type="text"
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
                     placeholder="Escribe tu nombre aquí..."
-                    className="px-3.5 py-1.5 rounded-full border border-[#D4AF37]/40 bg-black/60 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-[#D4AF37] font-serif text-xs transition-all w-48 sm:w-56 text-center"
+                    className="px-3.5 py-1.5 rounded-full border border-[#D4AF37]/40 bg-black/60 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-[#D4AF37] font-serif text-[16px] sm:text-xs transition-all w-full xs:w-56 text-center"
                   />
                 </div>
 
                 {/* Cuerpo del Decreto */}
-                <div className="text-center px-1 sm:px-4 mb-6">
+                <div className="text-center px-1 sm:px-4 mb-4 sm:mb-6">
                   <p className="text-xs sm:text-[14px] md:text-[15px] text-slate-200 font-sans leading-relaxed font-light">
                     Yo, <span className="text-[#E8D8BA] font-serif font-semibold underline underline-offset-4 decoration-[#D4AF37]/60">{displayName}</span>, {currentArchangel.decreeText}
                   </p>
-                  <p className="mt-4 text-xs sm:text-sm font-sans text-amber-200/90 font-medium tracking-wide">
+                  <p className="mt-3 text-xs sm:text-sm font-sans text-amber-200/90 font-medium tracking-wide">
                     {currentArchangel.closingText}
                   </p>
 
@@ -1189,7 +1215,7 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
                   <div className="mt-5 flex justify-center">
                     <button
                       onClick={handleCopy}
-                      className="group inline-flex items-center justify-center gap-2.5 py-2.5 sm:py-3 px-6 sm:px-8 rounded-full text-xs sm:text-[13px] font-sans tracking-[0.14em] uppercase transition-all duration-300 border border-[#D4AF37]/60 bg-gradient-to-b from-[#181926] to-[#0A0B13] hover:from-[#232538] hover:to-[#111220] text-[#E8D8BA] hover:text-[#FFF8EB] shadow-[0_4px_15px_rgba(0,0,0,0.6)] hover:shadow-[0_0_20px_rgba(212,175,55,0.35)] hover:scale-[1.02] cursor-pointer"
+                      className="group w-full sm:w-auto inline-flex items-center justify-center gap-2.5 py-3 px-6 sm:px-8 rounded-full text-xs sm:text-[13px] font-sans tracking-[0.12em] sm:tracking-[0.14em] uppercase transition-all duration-300 border border-[#D4AF37]/60 bg-gradient-to-b from-[#181926] to-[#0A0B13] hover:from-[#232538] hover:to-[#111220] text-[#E8D8BA] hover:text-[#FFF8EB] shadow-[0_4px_15px_rgba(0,0,0,0.6)] hover:shadow-[0_0_20px_rgba(212,175,55,0.35)] active:scale-95 cursor-pointer"
                     >
                       {copiedStatus ? (
                         <>
@@ -1216,10 +1242,10 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 exit={{ opacity: 0, y: -12, filter: "blur(4px)" }}
                 transition={{ duration: 0.45 }}
-                className="relative rounded-2xl border border-white/10 bg-[#0A0C16]/95 backdrop-blur-2xl px-6 sm:px-10 py-8 shadow-2xl flex flex-col items-center text-center overflow-hidden"
+                className="relative rounded-2xl border border-white/10 bg-[#0A0C16]/95 backdrop-blur-2xl px-4 sm:px-10 py-6 sm:py-8 shadow-2xl flex flex-col items-center text-center overflow-hidden"
               >
                 <span
-                  className="text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full border mb-4"
+                  className="text-[11px] sm:text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full border mb-3 sm:mb-4"
                   style={{
                     color: currentArchangel.colorHex,
                     borderColor: `${currentArchangel.colorHex}50`,
@@ -1230,7 +1256,7 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
                 </span>
 
                 {/* Orbe Pacer con Animación de Escala */}
-                <div className="relative w-36 h-36 my-6 flex items-center justify-center">
+                <div className="relative w-28 h-28 sm:w-36 sm:h-36 my-4 sm:my-6 flex items-center justify-center">
                   <motion.div
                     animate={{
                       scale:
@@ -1252,13 +1278,13 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
                       boxShadow: `0 0 35px ${currentArchangel.colorHex}80`
                     }}
                   />
-                  <div className="relative z-10 font-sacred text-2xl font-bold text-white drop-shadow-md">
+                  <div className="relative z-10 font-sacred text-xl sm:text-2xl font-bold text-white drop-shadow-md">
                     {breathSeconds}s
                   </div>
                 </div>
 
-                <div className="space-y-2 max-w-md">
-                  <h4 className="text-lg font-sacred uppercase tracking-wider text-amber-200">
+                <div className="space-y-1.5 sm:space-y-2 max-w-md">
+                  <h4 className="text-base sm:text-lg font-sacred uppercase tracking-wider text-amber-200">
                     {breathPhase === "inhala" && "1. Inhala la Luz Divina"}
                     {breathPhase === "reten" && "2. Retén y Siente la Frecuencia"}
                     {breathPhase === "exhala" && "3. Exhala y Libera"}
@@ -1282,17 +1308,17 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 exit={{ opacity: 0, y: -12, filter: "blur(4px)" }}
                 transition={{ duration: 0.45 }}
-                className="relative rounded-2xl border border-white/10 bg-[#0A0C16]/95 backdrop-blur-2xl p-6 sm:p-8 shadow-2xl space-y-4"
+                className="relative rounded-2xl border border-white/10 bg-[#0A0C16]/95 backdrop-blur-2xl p-4 sm:p-8 shadow-2xl space-y-3.5 sm:space-y-4"
               >
-                <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                  <h4 className="text-base sm:text-lg font-sacred text-amber-200 uppercase tracking-wider">
-                    Correspondencias Cósmicas de {currentArchangel.name}
+                <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 pb-3 border-b border-white/10">
+                  <h4 className="text-sm sm:text-lg font-sacred text-amber-200 uppercase tracking-wider">
+                    Correspondencias de {currentArchangel.name}
                   </h4>
-                  <span className="font-mono text-xs text-amber-400 font-semibold">{currentArchangel.frequencyHz} Hz Solfeggio</span>
+                  <span className="font-mono text-[11px] sm:text-xs text-amber-400 font-semibold">{currentArchangel.frequencyHz} Hz Solfeggio</span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  <div className="p-3 rounded-xl border border-white/5 bg-white/[0.02] flex items-start gap-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 text-xs">
+                  <div className="p-2.5 sm:p-3 rounded-xl border border-white/5 bg-white/[0.02] flex items-start gap-2.5">
                     <Shield className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
                     <div>
                       <span className="block text-stone-400 font-medium">Virtud y Don Divino</span>
@@ -1300,7 +1326,7 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
                     </div>
                   </div>
 
-                  <div className="p-3 rounded-xl border border-white/5 bg-white/[0.02] flex items-start gap-2.5">
+                  <div className="p-2.5 sm:p-3 rounded-xl border border-white/5 bg-white/[0.02] flex items-start gap-2.5">
                     <Activity className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                     <div>
                       <span className="block text-stone-400 font-medium">Chakra Resonante</span>
@@ -1308,7 +1334,7 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
                     </div>
                   </div>
 
-                  <div className="p-3 rounded-xl border border-white/5 bg-white/[0.02] flex items-start gap-2.5">
+                  <div className="p-2.5 sm:p-3 rounded-xl border border-white/5 bg-white/[0.02] flex items-start gap-2.5">
                     <Gem className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
                     <div>
                       <span className="block text-stone-400 font-medium">Cristal / Mineral Sagrado</span>
@@ -1316,7 +1342,7 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
                     </div>
                   </div>
 
-                  <div className="p-3 rounded-xl border border-white/5 bg-white/[0.02] flex items-start gap-2.5">
+                  <div className="p-2.5 sm:p-3 rounded-xl border border-white/5 bg-white/[0.02] flex items-start gap-2.5">
                     <Flame className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                     <div>
                       <span className="block text-stone-400 font-medium">Elemento & Dirección</span>
@@ -1324,7 +1350,7 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
                     </div>
                   </div>
 
-                  <div className="p-3 rounded-xl border border-white/5 bg-white/[0.02] sm:col-span-2 flex items-start gap-2.5">
+                  <div className="p-2.5 sm:p-3 rounded-xl border border-white/5 bg-white/[0.02] sm:col-span-2 flex items-start gap-2.5">
                     <Sun className="w-4 h-4 text-yellow-300 shrink-0 mt-0.5" />
                     <div>
                       <span className="block text-stone-400 font-medium">Momento Óptimo de Conexión</span>
