@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 
 // Importar las 20 Experiencias Místicas
-import ArchangelApp from "../experiencia-01/App";
+import { ArchangelPortal } from "../experiencia-01/ArchangelPortal";
 import { ChakraEnergyMap } from "../experiencia-02/ChakraEnergyMap";
 import { SolfeggioCymaticsTuner } from "../experiencia-03/SolfeggioCymaticsTuner";
 import { FemaleArchetypesWheel } from "../experiencia-04/FemaleArchetypesWheel";
@@ -413,7 +413,7 @@ export function ExperiencesHub() {
         <main className="w-full">
           {activeExp.num === 1 && (
             <div className="w-full">
-              <ArchangelApp />
+              <ArchangelPortal />
             </div>
           )}
           {activeExp.num === 2 && (

@@ -1,7 +1,25 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  Sparkles,
+  Volume2,
+  VolumeX,
+  Copy,
+  Check,
+  Wind,
+  Compass,
+  Gem,
+  Activity,
+  Flame,
+  Shield,
+  Heart,
+  Sun,
+  Layers,
+  Info,
+  Maximize2
+} from "lucide-react";
 
 export interface Archangel {
   id: string;
@@ -14,8 +32,15 @@ export interface Archangel {
   coreGlow: string;
   palette: string[];
   symbol: "sword" | "caduceus" | "trumpet" | "heart" | "flame" | "lion" | "metatron";
+  virtue: string;
+  crystal: string;
+  element: string;
+  direction: string;
+  dayTime: string;
   decreeText: string;
   closingText: string;
+  inhaleGuidance: string;
+  exhaleGuidance: string;
 }
 
 export const ARCHANGELS: Archangel[] = [
@@ -25,13 +50,20 @@ export const ARCHANGELS: Archangel[] = [
     title: "CANALIZACIÓN DE MIGUEL",
     rayName: "Rayo Azul Zafiro",
     frequencyHz: 741,
-    chakraName: "Garganta & Protección",
+    chakraName: "Garganta & Protección Soberana",
     colorHex: "#3B82F6",
-    coreGlow: "rgba(59, 130, 246, 0.8)",
-    palette: ["#93C5FD", "#60A5FA", "#3B82F6", "#1D4ED8", "#FFFFFF"],
+    coreGlow: "rgba(59, 130, 246, 0.85)",
+    palette: ["#BFDBFE", "#60A5FA", "#3B82F6", "#1D4ED8", "#FFFFFF"],
     symbol: "sword",
-    decreeText: "invoco la presencia del Arcángel Miguel y su espada de luz zafiro. Corto todo lazo de miedo, juicio o atadura densa. Sello mi campo energético en la verdad divina y camino con valentía, soberanía y fe inquebrantable.",
-    closingText: "Soy fuerza, soy valentía, soy protección."
+    virtue: "Fuerza Divina, Coraje Inquebrantable & Corte de Lazos Kármicos",
+    crystal: "Lapislázuli, Sodalita & Zafiro Azul",
+    element: "Fuego Eléctrico & Éter",
+    direction: "Sur",
+    dayTime: "Domingo · Hora del Mediodía",
+    decreeText: "invoco la presencia victoriosa del Arcángel Miguel y su espada de luz zafiro. Corto de raíz todo lazo de miedo, juicio, atadura o interferencia densa en mi campo áurico. Sello mi templo interior en la verdad primordial y camino con soberanía, valentía y fe inquebrantable.",
+    closingText: "Soy fuerza, soy soberanía, soy protección divina.",
+    inhaleGuidance: "Inhala la luz azul zafiro envolviendo tu pecho y garganta...",
+    exhaleGuidance: "Exhala con fuerza todo lazo, temor o contrato que ya no te sirve..."
   },
   {
     id: "rafael",
@@ -39,13 +71,20 @@ export const ARCHANGELS: Archangel[] = [
     title: "CANALIZACIÓN DE RAFAEL",
     rayName: "Rayo Verde Esmeralda",
     frequencyHz: 528,
-    chakraName: "Corazón & Sanación",
+    chakraName: "Corazón & Sanación Regenerativa",
     colorHex: "#10B981",
-    coreGlow: "rgba(168, 185, 129, 0.8)",
+    coreGlow: "rgba(16, 185, 129, 0.85)",
     palette: ["#A7F3D0", "#34D399", "#10B981", "#047857", "#FFFFFF"],
     symbol: "caduceus",
-    decreeText: "abro cada célula, tejido y emoción al bálsamo esmeralda de Rafael. Libero las memorias de dolor físico o psíquico, restauro la armonía de mi cuerpo y permito que la salud perfecta del Cosmos fluya en mí.",
-    closingText: "Soy salud, soy armonía, soy renovación."
+    virtue: "Regeneración Celular, Sanación Holística & Consagración de la Vida",
+    crystal: "Esmeralda, Malaquita, Venturina & Jade Verde",
+    element: "Aire Vital & Éter Sanador",
+    direction: "Este",
+    dayTime: "Miércoles · Al Amanecer",
+    decreeText: "abro cada célula, órgano, tejido y memoria emocional al bálsamo esmeralda de Rafael. Disuelvo toda creencia de escasez de salud, restauro el diseño original de mi ADN lumínico y permito que la vitalidad infinita del Cosmos fluya por mi sistema.",
+    closingText: "Soy salud perfecta, soy armonía celular, soy renovación.",
+    inhaleGuidance: "Inhala el rocío esmeralda nutriendo cada mitocondria...",
+    exhaleGuidance: "Exhala dolores viejos, fatiga y memorias de enfermedad..."
   },
   {
     id: "gabriel",
@@ -53,13 +92,20 @@ export const ARCHANGELS: Archangel[] = [
     title: "CANALIZACIÓN DE GABRIEL",
     rayName: "Rayo Blanco Cristalino",
     frequencyHz: 852,
-    chakraName: "Claridad & Expresión",
+    chakraName: "Claridad, Pureza & Tercer Ojo",
     colorHex: "#F1F5F9",
-    coreGlow: "rgba(241, 245, 249, 0.85)",
+    coreGlow: "rgba(241, 245, 249, 0.9)",
     palette: ["#FFFFFF", "#E2E8F0", "#CBD5E1", "#94A3B8", "#FEF08A"],
     symbol: "trumpet",
-    decreeText: "recibo la trompeta celestial y la luz diamantina de Gabriel. Despejo toda confusión de mi mente, abro mi corazón a los mensajes divinos y expreso mi verdad con autenticidad, gracia y propósito sagrado.",
-    closingText: "Soy claridad, soy verdad, soy luz pura."
+    virtue: "Revelación Divina, Claridad Mental, Creatividad & Verdad Expresada",
+    crystal: "Selenita, Diamante Herkimer, Cuarzo Transparente & Piedra de Luna",
+    element: "Agua Cristalina & Niebla Etérea",
+    direction: "Oeste",
+    dayTime: "Lunes · Luz de la Luna Llena",
+    decreeText: "recibo la trompeta celestial y la luz diamantina del Arcángel Gabriel. Despejo toda niebla mental, abro mi percepción intuitiva a la verdad cósmica y expreso el propósito sagrado de mi alma con autenticidad y gracia pura.",
+    closingText: "Soy claridad divina, soy verdad, soy luz diamantina.",
+    inhaleGuidance: "Inhala la luz blanca cristalina que purifica tus pensamientos...",
+    exhaleGuidance: "Exhala la confusión, el juicio mental y el ruido externo..."
   },
   {
     id: "chamuel",
@@ -67,13 +113,20 @@ export const ARCHANGELS: Archangel[] = [
     title: "CANALIZACIÓN DE CHAMUEL",
     rayName: "Rayo Rosa Cuarzo",
     frequencyHz: 639,
-    chakraName: "Amor Incondicional",
+    chakraName: "Templo del Corazón & Conexión Sagrada",
     colorHex: "#F472B6",
-    coreGlow: "rgba(244, 114, 182, 0.8)",
+    coreGlow: "rgba(244, 114, 182, 0.85)",
     palette: ["#FBCFE8", "#F472B6", "#EC4899", "#BE185D", "#FFFFFF"],
     symbol: "heart",
-    decreeText: "envuelvo mi corazón en la llama rosa del Arcángel Chamuel. Sano toda herida de abandono o desamor, me abro a relaciones sagradas y elijo mirarme con ternura infinita y compasión divina.",
-    closingText: "Soy amor, soy perdón, soy paz en mis vínculos."
+    virtue: "Amor Incondicional, Reconciliación, Autoestima & Paz Relacional",
+    crystal: "Cuarzo Rosa, Rodocrosita, Morganita & Turmalina Rosa",
+    element: "Fuego Compasivo & Agua Dulce",
+    direction: "Noreste",
+    dayTime: "Martes · Al Crepúsculo",
+    decreeText: "sumerjo mi corazón en el fuego rosa de la ternura infinita de Chamuel. Sano toda herida de rechazo, duelo o traición en mis relaciones. Me reconozco digno de amar y ser amado, proyectando devoción y compasión universal hacia todo ser viviente.",
+    closingText: "Soy amor incondicional, soy ternura, soy paz en mis vínculos.",
+    inhaleGuidance: "Inhala el calor cálido del cuarzo rosa en el centro de tu pecho...",
+    exhaleGuidance: "Exhala resentimientos, defensas y corazas del pasado..."
   },
   {
     id: "uriel",
@@ -81,13 +134,20 @@ export const ARCHANGELS: Archangel[] = [
     title: "CANALIZACIÓN DE URIEL",
     rayName: "Rayo Rubí Dorado",
     frequencyHz: 417,
-    chakraName: "Poder & Sabiduría",
+    chakraName: "Plexo Solar & Voluntad Creativa",
     colorHex: "#FB923C",
-    coreGlow: "rgba(251, 146, 60, 0.8)",
+    coreGlow: "rgba(251, 146, 60, 0.85)",
     palette: ["#FED7AA", "#FB923C", "#EA580C", "#9A3412", "#FDE047"],
     symbol: "flame",
-    decreeText: "recibo la antorcha sagrada y la sabiduría divina del Arcángel Uriel. Disuelvo la ansiedad ante lo incierto, recibo respuestas claras para resolver mis desafíos y confío en la providencia del Universo.",
-    closingText: "Soy sabiduría, soy serenidad, soy luz en el camino."
+    virtue: "Iluminación de Sabiduría, Paz Interior, Solución de Conflictos & Discernimiento",
+    crystal: "Ámbar, Ojo de Tigre, Granate, Cornalina & Rubí",
+    element: "Fuego Solar & Magma Primordial",
+    direction: "Norte",
+    dayTime: "Jueves · Salida del Sol",
+    decreeText: "recibo la antorcha sagrada y la sabiduría cósmica del Arcángel Uriel. Disuelvo la incertidumbre y el temor al futuro. Acepto la guía certera que ilumina mi sendero y confío plenamente en la sincronicidad y orden perfecto del Universo.",
+    closingText: "Soy sabiduría viva, soy serenidad, soy luz en el camino.",
+    inhaleGuidance: "Inhala la llama dorada y rubí llenando tu plexo de confianza...",
+    exhaleGuidance: "Exhala la ansiedad, la indecisión y la impotencia..."
   },
   {
     id: "ariel",
@@ -95,13 +155,20 @@ export const ARCHANGELS: Archangel[] = [
     title: "CANALIZACIÓN DE ARIEL",
     rayName: "Rayo Ámbar & Abundancia",
     frequencyHz: 396,
-    chakraName: "Enraizamiento & Prosperidad",
+    chakraName: "Chakra Raíz & Enraizamiento a Gaia",
     colorHex: "#EAB308",
     coreGlow: "rgba(234, 179, 8, 0.85)",
     palette: ["#FEF08A", "#FACC15", "#EAB308", "#CA8A04", "#FFFFFF"],
     symbol: "lion",
-    decreeText: "reconozco la generosidad de la Madre Tierra guiada por la presencia de Ariel. Abro mis brazos para recibir abundancia en sincronía perfecta y honro mi poder infinito de materializar prosperidad.",
-    closingText: "Soy abundancia, soy gratitud, soy prosperidad."
+    virtue: "Prosperidad Material, Conexión con la Naturaleza & Manifestación Terrenal",
+    crystal: "Citrino, Pirita, Jaspe Rojo, Cuarzo Ahumado & Ojo de Halcón",
+    element: "Tierra Fértil & Bosque Ancestral",
+    direction: "Noroeste",
+    dayTime: "Viernes · Conexión con la Tierra",
+    decreeText: "reconozco la generosidad y providencia infinita de la Madre Tierra custodiada por Ariel. Abro mis brazos para recibir la abundancia económica, creativa y espiritual en sincronía armónica. Honro mi capacidad sagrada de manifestar plenitud en este plano.",
+    closingText: "Soy abundancia natural, soy gratitud infinita, soy prosperidad.",
+    inhaleGuidance: "Inhala las raíces doradas que te anclan profundamente en la Tierra...",
+    exhaleGuidance: "Exhala la escasez, el apego y la sensación de carencia..."
   },
   {
     id: "metatron",
@@ -109,17 +176,24 @@ export const ARCHANGELS: Archangel[] = [
     title: "CANALIZACIÓN DE METATRÓN",
     rayName: "Rayo Violeta Cuántico",
     frequencyHz: 963,
-    chakraName: "Corona & Ascensión",
+    chakraName: "Corona & Ascensión Multidimensional",
     colorHex: "#A855F7",
     coreGlow: "rgba(168, 85, 247, 0.85)",
     palette: ["#F3E8FF", "#C084FC", "#A855F7", "#7E22CE", "#FDE047"],
     symbol: "metatron",
-    decreeText: "reconozco mi divinidad interior y me conecto con la sabiduría cósmica de Metatrón. Abrazo mi luz, activo mi geometría sagrada y me alineo con la guía universal para manifestar mi más alta consciencia.",
-    closingText: "Soy amor, soy luz, soy paz."
+    virtue: "Geometría Sagrada, Ascensión, Registros del Alma & Activación del Merkaba",
+    crystal: "Amatista Chevron, Tanzanita, Moldavita & Cuarzo Lemuriano",
+    element: "Plasma Cósmico & Akasha",
+    direction: "Centro / Cenit Universal",
+    dayTime: "Sábado · Medianoche y Portales Cuánticos",
+    decreeText: "reconozco mi divinidad interior y me enlazo a la inteligencia suprema de Metatrón. Activo el Cubo de Metatrón y mi Merkaba personal, elevando mi frecuencia electromagnética. Me alineo con la consciencia universal para encarnar mi más alto propósito cósmico.",
+    closingText: "Soy consciencia pura, soy geometría divina, soy luz eterna.",
+    inhaleGuidance: "Inhala la espiral violeta activando tu corona hacia las estrellas...",
+    exhaleGuidance: "Exhala la ilusión de separación, fundiéndote con la Unidad..."
   }
 ];
 
-// Símbolos sagrados vectoriales nítidos
+// Símbolos Sagrados Vectoriales
 const SacredGlyph: React.FC<{ symbol: Archangel["symbol"]; className?: string }> = ({
   symbol,
   className = "w-7 h-7"
@@ -226,8 +300,15 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
   initialId = "metatron"
 }) => {
   const [selectedId, setSelectedId] = useState<string>(initialId);
+  const [activeTab, setActiveTab] = useState<"decreto" | "meditacion" | "atributos">("decreto");
   const [userName, setUserName] = useState<string>("");
   const [copiedStatus, setCopiedStatus] = useState<boolean>(false);
+  const [isDroneActive, setIsDroneActive] = useState<boolean>(false);
+  const [droneVolume, setDroneVolume] = useState<number>(0.15);
+
+  // Estado para el ciclo de respiración meditativa
+  const [breathPhase, setBreathPhase] = useState<"inhala" | "reten" | "exhala" | "reposo">("inhala");
+  const [breathSeconds, setBreathSeconds] = useState<number>(4);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const clickWaveRef = useRef<{ active: boolean; r: number; x: number; y: number } | null>(null);
@@ -235,9 +316,18 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
   const currentArchangel =
     ARCHANGELS.find((a) => a.id === selectedId) || ARCHANGELS[6];
 
+  // ============================================================
+  // MOTOR ACÚSTICO WEB AUDIO API (Pulsos Armónicos + Drone Solfeggio)
+  // ============================================================
   const audioCtxRef = useRef<AudioContext | null>(null);
+  const droneNodesRef = useRef<{
+    fundamentalOsc: OscillatorNode;
+    harmonicOsc: OscillatorNode;
+    subOsc: OscillatorNode;
+    masterGain: GainNode;
+  } | null>(null);
 
-  const getAudioContext = () => {
+  const getAudioContext = useCallback(() => {
     if (!audioCtxRef.current) {
       const AudioCtx =
         window.AudioContext ||
@@ -248,39 +338,170 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
       audioCtxRef.current.resume().catch(() => {});
     }
     return audioCtxRef.current;
-  };
+  }, []);
 
-  // Campana de sonido celestial armónica
-  const playHarmonicTone = (freq: number) => {
+  // Tono armónico con decaimiento natural tipo campana tibetana / cristal
+  const playHarmonicTone = useCallback((freq: number) => {
     try {
       const ctx = getAudioContext();
       const now = ctx.currentTime;
 
-      [freq, freq * 1.5, freq * 2].forEach((f, idx) => {
+      [freq, freq * 1.5, freq * 2, freq * 2.75].forEach((f, idx) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
 
-        osc.type = "sine";
+        osc.type = idx === 0 ? "sine" : "triangle";
         osc.frequency.setValueAtTime(f, now);
 
-        gain.gain.setValueAtTime(0, now);
-        gain.gain.linearRampToValueAtTime(0.06 / (idx + 1), now + 0.08);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 2.8);
+        const peakGain = (0.08 / (idx + 1)) * 0.9;
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.linearRampToValueAtTime(peakGain, now + 0.05 + idx * 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.00001, now + 3.2);
 
         osc.connect(gain);
         gain.connect(ctx.destination);
 
         osc.start(now);
-        osc.stop(now + 2.9);
+        osc.stop(now + 3.3);
       });
     } catch {
-      // Ignora si audio no permitido
+      // Audio autoplay restrictions
     }
-  };
+  }, [getAudioContext]);
+
+  // Manejador del Baño Sonoro Continuo (Drone Solfeggio)
+  const toggleDrone = useCallback(() => {
+    const ctx = getAudioContext();
+
+    if (isDroneActive && droneNodesRef.current) {
+      // Fade out
+      const { masterGain, fundamentalOsc, harmonicOsc, subOsc } = droneNodesRef.current;
+      const now = ctx.currentTime;
+      masterGain.gain.linearRampToValueAtTime(0.00001, now + 1.2);
+      setTimeout(() => {
+        try {
+          fundamentalOsc.stop();
+          harmonicOsc.stop();
+          subOsc.stop();
+          fundamentalOsc.disconnect();
+          harmonicOsc.disconnect();
+          subOsc.disconnect();
+          masterGain.disconnect();
+        } catch {}
+        droneNodesRef.current = null;
+      }, 1300);
+      setIsDroneActive(false);
+    } else {
+      // Activar Drone en frequencyHz del Arcángel activo
+      const now = ctx.currentTime;
+      const freq = currentArchangel.frequencyHz;
+
+      const masterGain = ctx.createGain();
+      masterGain.gain.setValueAtTime(0.0001, now);
+      masterGain.gain.linearRampToValueAtTime(droneVolume, now + 1.5);
+      masterGain.connect(ctx.destination);
+
+      // 1. Oscilador fundamental puro
+      const fundamentalOsc = ctx.createOscillator();
+      fundamentalOsc.type = "sine";
+      fundamentalOsc.frequency.setValueAtTime(freq, now);
+
+      // 2. Armónico sutil (quinta perfecta arriba freq * 1.5)
+      const harmonicOsc = ctx.createOscillator();
+      harmonicOsc.type = "sine";
+      harmonicOsc.frequency.setValueAtTime(freq * 1.5, now);
+      const harmGain = ctx.createGain();
+      harmGain.gain.value = 0.22;
+      harmonicOsc.connect(harmGain);
+      harmGain.connect(masterGain);
+
+      // 3. Sub-octava profunda (freq / 2 o freq / 4)
+      const subOsc = ctx.createOscillator();
+      subOsc.type = "sine";
+      const subFreq = freq > 600 ? freq / 4 : freq / 2;
+      subOsc.frequency.setValueAtTime(subFreq, now);
+      const subGain = ctx.createGain();
+      subGain.gain.value = 0.35;
+      subOsc.connect(subGain);
+      subGain.connect(masterGain);
+
+      fundamentalOsc.connect(masterGain);
+
+      fundamentalOsc.start(now);
+      harmonicOsc.start(now);
+      subOsc.start(now);
+
+      droneNodesRef.current = {
+        fundamentalOsc,
+        harmonicOsc,
+        subOsc,
+        masterGain
+      };
+      setIsDroneActive(true);
+    }
+  }, [isDroneActive, getAudioContext, currentArchangel, droneVolume]);
+
+  // Si cambia el arcángel y el drone está activo, hacer transición de frecuencia suave (portamento)
+  useEffect(() => {
+    if (isDroneActive && droneNodesRef.current && audioCtxRef.current) {
+      const now = audioCtxRef.current.currentTime;
+      const freq = currentArchangel.frequencyHz;
+      const { fundamentalOsc, harmonicOsc, subOsc } = droneNodesRef.current;
+
+      fundamentalOsc.frequency.exponentialRampToValueAtTime(freq, now + 1.2);
+      harmonicOsc.frequency.exponentialRampToValueAtTime(freq * 1.5, now + 1.2);
+      const subFreq = freq > 600 ? freq / 4 : freq / 2;
+      subOsc.frequency.exponentialRampToValueAtTime(subFreq, now + 1.2);
+    }
+  }, [selectedId, currentArchangel, isDroneActive]);
+
+  // Modificar volumen del drone
+  useEffect(() => {
+    if (isDroneActive && droneNodesRef.current && audioCtxRef.current) {
+      const now = audioCtxRef.current.currentTime;
+      droneNodesRef.current.masterGain.gain.linearRampToValueAtTime(droneVolume, now + 0.1);
+    }
+  }, [droneVolume, isDroneActive]);
+
+  // Limpieza de audio al desmontar
+  useEffect(() => {
+    return () => {
+      if (droneNodesRef.current) {
+        try {
+          droneNodesRef.current.fundamentalOsc.stop();
+          droneNodesRef.current.harmonicOsc.stop();
+          droneNodesRef.current.subOsc.stop();
+        } catch {}
+      }
+    };
+  }, []);
 
   // ============================================================
+  // CICLO DE RESPIRACIÓN MEDITATIVA (Pacer 4-4-4-4)
   // ============================================================
-  // MOTOR FÍSICO DE PARTÍCULAS: REPULSIÓN DE MOUSE Y ONDA EXPANSIVA HACIA LOS LADOS
+  useEffect(() => {
+    if (activeTab !== "meditacion") return;
+
+    const timer = setInterval(() => {
+      setBreathSeconds((prev) => {
+        if (prev <= 1) {
+          setBreathPhase((current) => {
+            if (current === "inhala") return "reten";
+            if (current === "reten") return "exhala";
+            if (current === "exhala") return "reposo";
+            return "inhala";
+          });
+          return 4;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [activeTab]);
+
+  // ============================================================
+  // MOTOR FÍSICO DE PARTÍCULAS: CANVAS RETINA & DINÁMICA DE PLASMA
   // ============================================================
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -289,14 +510,16 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
     if (!ctx) return;
 
     let animId: number;
-    const size = 380;
-    canvas.width = size;
-    canvas.height = size;
+    const dpr = typeof window !== "undefined" ? Math.min(window.devicePixelRatio || 1, 2) : 1;
+    const size = 390;
+    canvas.width = size * dpr;
+    canvas.height = size * dpr;
+    ctx.scale(dpr, dpr);
+
     const centerX = size / 2;
     const centerY = size / 2;
     const maxRadius = size * 0.44;
 
-    // Estado del cursor dentro del canvas
     const mouse = {
       x: -999,
       y: -999,
@@ -307,7 +530,6 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
       active: false
     };
 
-    // 160 partículas cósmicas de alta resolución
     interface CosmicParticle {
       x: number;
       y: number;
@@ -323,9 +545,9 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
       pulsePhase: number;
     }
 
-    const particles: CosmicParticle[] = Array.from({ length: 160 }, (_, idx) => {
-      const angle = (idx / 160) * Math.PI * 2 + Math.random() * 0.3;
-      const dist = 18 + Math.random() * (maxRadius * 0.78);
+    const particles: CosmicParticle[] = Array.from({ length: 200 }, (_, idx) => {
+      const angle = (idx / 200) * Math.PI * 2 + Math.random() * 0.35;
+      const dist = 18 + Math.random() * (maxRadius * 0.82);
       return {
         x: centerX + Math.cos(angle) * dist,
         y: centerY + Math.sin(angle) * dist,
@@ -333,8 +555,8 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
         vy: 0,
         orbitAngle: angle,
         orbitDist: dist,
-        baseSpeed: (Math.random() * 0.007 + 0.003) * (idx % 2 === 0 ? 1 : -1),
-        size: Math.random() < 0.25 ? Math.random() * 1.8 + 2.4 : Math.random() * 1.6 + 0.8,
+        baseSpeed: (Math.random() * 0.008 + 0.0035) * (idx % 2 === 0 ? 1 : -1),
+        size: Math.random() < 0.2 ? Math.random() * 2 + 2.5 : Math.random() * 1.5 + 0.7,
         color: currentArchangel.palette[Math.floor(Math.random() * currentArchangel.palette.length)],
         alpha: Math.random() * 0.5 + 0.4,
         pulseRate: Math.random() * 0.04 + 0.02,
@@ -342,20 +564,6 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
       };
     });
 
-    // Chispas efímeras eyectadas al hacer clic (burst sparks)
-    interface Spark {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      color: string;
-      size: number;
-      alpha: number;
-      decay: number;
-    }
-    const sparks: Spark[] = [];
-
-    // Ondas expansivas de choque (Shockwaves)
     interface Shockwave {
       x: number;
       y: number;
@@ -366,103 +574,105 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
       color: string;
       thickness: number;
     }
-    const shockwaves: Shockwave[] = [];
 
-    // Factor de gravedad de retorno (se debilita tras un clic para que las partículas permanezcan en los lados)
-    let returnGravity = 0.012;
+    interface CosmicBurst {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      color: string;
+      size: number;
+      alpha: number;
+      decay: number;
+    }
+
+    const shockwaves: Shockwave[] = [];
+    const bursts: CosmicBurst[] = [];
+
+    let returnGravity = 0.013;
     let gravityTimer: number | null = null;
 
-    // Disparar Onda Expansiva Potente: lanza partículas directamente hacia los bordes
     const triggerShockwave = (clickX = centerX, clickY = centerY) => {
-      // 1. Crear onda visual expansiva de choque
       shockwaves.push({
         x: clickX,
         y: clickY,
         radius: 4,
-        maxRadius: maxRadius * 1.25,
+        maxRadius: maxRadius * 1.3,
         alpha: 1.0,
-        speed: 7.2,
+        speed: 7.8,
         color: currentArchangel.colorHex,
         thickness: 5.5
       });
 
-      // Segunda onda secundaria armónica
       shockwaves.push({
         x: clickX,
         y: clickY,
         radius: 1,
-        maxRadius: maxRadius * 1.1,
-        alpha: 0.7,
-        speed: 4.8,
+        maxRadius: maxRadius * 1.15,
+        alpha: 0.8,
+        speed: 5.2,
         color: "#FFFFFF",
-        thickness: 2.5
+        thickness: 2.8
       });
 
-      // 2. FÍSICA RADIAL EXPLOSIVA: Empujar TODAS las partículas con fuerza hacia los lados / bordes
       particles.forEach((p) => {
         let dx = p.x - clickX;
         let dy = p.y - clickY;
         let dist = Math.hypot(dx, dy);
 
         if (dist < 4) {
-          // Si está en el mero centro del clic, dar dirección aleatoria
           const rndAng = Math.random() * Math.PI * 2;
           dx = Math.cos(rndAng);
           dy = Math.sin(rndAng);
           dist = 1;
         }
 
-        // Fuerza explosiva: entre 18 y 34 px/frame según cercanía
-        const blastPower = Math.max(14, 32 * (1 - dist / (maxRadius * 1.2)));
-        p.vx += (dx / dist) * blastPower;
-        p.vy += (dy / dist) * blastPower;
+        const force = Math.max(16, 36 * (1 - dist / (maxRadius * 1.25)));
+        p.vx += (dx / dist) * force;
+        p.vy += (dy / dist) * force;
       });
 
-      // 3. Crear 26 chispas eyectadas a gran velocidad hacia todas direcciones
-      for (let s = 0; s < 26; s++) {
-        const sparkAng = (s / 26) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
-        const sparkSpeed = Math.random() * 8.5 + 4.5;
-        sparks.push({
+      for (let i = 0; i < 30; i++) {
+        const ang = (i / 30) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+        const spd = Math.random() * 9 + 4.5;
+        bursts.push({
           x: clickX,
           y: clickY,
-          vx: Math.cos(sparkAng) * sparkSpeed,
-          vy: Math.sin(sparkAng) * sparkSpeed,
-          color: Math.random() > 0.4 ? "#FFFFFF" : currentArchangel.palette[Math.floor(Math.random() * currentArchangel.palette.length)],
-          size: Math.random() * 2.5 + 1.2,
+          vx: Math.cos(ang) * spd,
+          vy: Math.sin(ang) * spd,
+          color: Math.random() > 0.35 ? "#FFFFFF" : currentArchangel.palette[Math.floor(Math.random() * currentArchangel.palette.length)],
+          size: Math.random() * 2.8 + 1.2,
           alpha: 1.0,
-          decay: Math.random() * 0.025 + 0.018
+          decay: Math.random() * 0.025 + 0.016
         });
       }
 
-      // Reducir la fuerza de retorno temporalmente para que se disfrute el viaje a los lados
       returnGravity = 0.0035;
       if (gravityTimer) clearTimeout(gravityTimer);
       gravityTimer = window.setTimeout(() => {
-        returnGravity = 0.012;
+        returnGravity = 0.013;
       }, 1600);
     };
 
-    // Actualizar coordenadas del mouse
     const updateMousePos = (clientX: number, clientY: number) => {
       const rect = canvas.getBoundingClientRect();
-      const newX = ((clientX - rect.left) / rect.width) * size;
-      const newY = ((clientY - rect.top) / rect.height) * size;
+      const scaleX = size / rect.width;
+      const scaleY = size / rect.height;
+      const canvasX = (clientX - rect.left) * scaleX;
+      const canvasY = (clientY - rect.top) * scaleY;
 
       if (mouse.prevX !== -999) {
-        mouse.vx = newX - mouse.prevX;
-        mouse.vy = newY - mouse.prevY;
+        mouse.vx = canvasX - mouse.prevX;
+        mouse.vy = canvasY - mouse.prevY;
       }
-      mouse.prevX = newX;
-      mouse.prevY = newY;
-      mouse.x = newX;
-      mouse.y = newY;
+      mouse.prevX = canvasX;
+      mouse.prevY = canvasY;
+      mouse.x = canvasX;
+      mouse.y = canvasY;
       mouse.active = true;
     };
 
-    const handleMouseMove = (e: MouseEvent) => {
-      updateMousePos(e.clientX, e.clientY);
-    };
-
+    const handleMouseMove = (e: MouseEvent) => updateMousePos(e.clientX, e.clientY);
     const handleMouseLeave = () => {
       mouse.active = false;
       mouse.x = -999;
@@ -475,21 +685,18 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
 
     const handleCanvasClick = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
-      const clickX = ((e.clientX - rect.left) / rect.width) * size;
-      const clickY = ((e.clientY - rect.top) / rect.height) * size;
+      const scaleX = size / rect.width;
+      const scaleY = size / rect.height;
+      const clickX = (e.clientX - rect.left) * scaleX;
+      const clickY = (e.clientY - rect.top) * scaleY;
       triggerShockwave(clickX, clickY);
       playHarmonicTone(currentArchangel.frequencyHz);
     };
 
-    // Soporte táctil
     const handleTouchMove = (e: TouchEvent) => {
-      if (e.touches.length > 0) {
-        updateMousePos(e.touches[0].clientX, e.touches[0].clientY);
-      }
+      if (e.touches.length > 0) updateMousePos(e.touches[0].clientX, e.touches[0].clientY);
     };
-    const handleTouchEnd = () => {
-      handleMouseLeave();
-    };
+    const handleTouchEnd = () => handleMouseLeave();
 
     canvas.addEventListener("mousemove", handleMouseMove);
     canvas.addEventListener("mouseleave", handleMouseLeave);
@@ -497,7 +704,6 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
     canvas.addEventListener("touchmove", handleTouchMove, { passive: true });
     canvas.addEventListener("touchend", handleTouchEnd);
 
-    // Revisar trigger externo (al pulsar orbe contenedor o seleccionar arcángel)
     const checkExternalWave = () => {
       if (clickWaveRef.current && clickWaveRef.current.active) {
         triggerShockwave(clickWaveRef.current.x, clickWaveRef.current.y);
@@ -505,14 +711,13 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
       }
     };
 
-    // BUCLE DE RENDERIZADO Y FÍSICA CONTINUA
     const render = () => {
       ctx.clearRect(0, 0, size, size);
       checkExternalWave();
 
       // 1. Fondo de obsidiana con profundidad estelar
       const bgGrad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, maxRadius);
-      bgGrad.addColorStop(0, `${currentArchangel.colorHex}22`);
+      bgGrad.addColorStop(0, `${currentArchangel.colorHex}25`);
       bgGrad.addColorStop(0.55, "#080b16");
       bgGrad.addColorStop(1, "#020306");
       ctx.fillStyle = bgGrad;
@@ -520,22 +725,20 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
       ctx.arc(centerX, centerY, maxRadius, 0, Math.PI * 2);
       ctx.fill();
 
-      // 2. Halo y vórtice de plasma celestial giratorio
+      // 2. Halo giratorio de plasma
       ctx.save();
       ctx.translate(centerX, centerY);
-      ctx.rotate(Date.now() * 0.00032);
+      ctx.rotate(Date.now() * 0.00035);
       for (let i = 0; i < 3; i++) {
         ctx.beginPath();
-        ctx.ellipse(0, 0, maxRadius * 0.72, maxRadius * 0.32, (i * Math.PI) / 3, 0, Math.PI * 2);
-        ctx.strokeStyle = `${currentArchangel.colorHex}16`;
+        ctx.ellipse(0, 0, maxRadius * 0.74, maxRadius * 0.32, (i * Math.PI) / 3, 0, Math.PI * 2);
+        ctx.strokeStyle = `${currentArchangel.colorHex}18`;
         ctx.lineWidth = 14;
-        ctx.filter = "blur(8px)";
         ctx.stroke();
       }
       ctx.restore();
-      ctx.filter = "none";
 
-      // 3. ACTUALIZAR Y DIBUJAR ONDAS EXPANSIVAS (SHOCKWAVES)
+      // 3. Shockwaves
       for (let w = shockwaves.length - 1; w >= 0; w--) {
         const sw = shockwaves[w];
         sw.radius += sw.speed;
@@ -546,18 +749,14 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
           continue;
         }
 
-        // Anillo visual de la onda con resplandor
         ctx.save();
         ctx.beginPath();
         ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
         ctx.strokeStyle = sw.color;
         ctx.lineWidth = sw.thickness;
         ctx.globalAlpha = Math.max(0, sw.alpha);
-        ctx.shadowColor = sw.color;
-        ctx.shadowBlur = 18;
         ctx.stroke();
 
-        // Anillo interior blanco brillante de alta frecuencia
         ctx.beginPath();
         ctx.arc(sw.x, sw.y, Math.max(1, sw.radius - 1), 0, Math.PI * 2);
         ctx.strokeStyle = "#FFFFFF";
@@ -567,100 +766,80 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
         ctx.restore();
       }
 
-      // 4. ACTUALIZAR Y DIBUJAR CHISPAS EXPULSADAS (SPARKS)
-      for (let s = sparks.length - 1; s >= 0; s--) {
-        const sp = sparks[s];
-        sp.x += sp.vx;
-        sp.y += sp.vy;
-        sp.vx *= 0.94;
-        sp.vy *= 0.94;
-        sp.alpha -= sp.decay;
+      // 4. Bursts
+      for (let b = bursts.length - 1; b >= 0; b--) {
+        const br = bursts[b];
+        br.x += br.vx;
+        br.y += br.vy;
+        br.vx *= 0.94;
+        br.vy *= 0.94;
+        br.alpha -= br.decay;
 
-        if (sp.alpha <= 0) {
-          sparks.splice(s, 1);
+        if (br.alpha <= 0) {
+          bursts.splice(b, 1);
           continue;
         }
 
         ctx.save();
         ctx.beginPath();
-        ctx.arc(sp.x, sp.y, sp.size, 0, Math.PI * 2);
-        ctx.fillStyle = sp.color;
-        ctx.globalAlpha = sp.alpha;
-        ctx.shadowColor = sp.color;
-        ctx.shadowBlur = 10;
+        ctx.arc(br.x, br.y, br.size, 0, Math.PI * 2);
+        ctx.fillStyle = br.color;
+        ctx.globalAlpha = br.alpha;
         ctx.fill();
         ctx.restore();
       }
 
-      // 5. ACTUALIZAR Y DIBUJAR TODAS LAS PARTÍCULAS
+      // 5. Partículas con física de repulsión
       particles.forEach((p) => {
-        // A. Movimiento orbital armónico
         p.orbitAngle += p.baseSpeed;
         const targetX = centerX + Math.cos(p.orbitAngle) * p.orbitDist;
         const targetY = centerY + Math.sin(p.orbitAngle) * p.orbitDist;
 
-        // B. Retorno elástico suave hacia la órbita (aceleración gravitacional)
         p.vx += (targetX - p.x) * returnGravity;
         p.vy += (targetY - p.y) * returnGravity;
 
-        // C. REPULSIÓN DEL MOUSE EN TIEMPO REAL:
-        // Cuando pasas el mouse, las partículas se apartan activamente con fuerza y fluidez
         if (mouse.active) {
           const mdx = p.x - mouse.x;
           const mdy = p.y - mouse.y;
           const mdist = Math.hypot(mdx, mdy);
-          const repelRadius = 115; // Radio amplio de detección
+          const repelRadius = 115;
 
           if (mdist < repelRadius && mdist > 0.1) {
-            // Fuerza de repulsión cuadrática (muy potente cerca, suave al límite)
             const ratio = 1 - mdist / repelRadius;
-            const repelPower = ratio * ratio * 15;
+            const repelPower = ratio * ratio * 16;
 
             p.vx += (mdx / mdist) * repelPower;
             p.vy += (mdy / mdist) * repelPower;
-
-            // Vórtice tangencial alrededor del cursor (efecto remolino cósmico)
             p.vx += (-mdy / mdist) * repelPower * 0.45;
             p.vy += (mdx / mdist) * repelPower * 0.45;
-
-            // Arrastre por viento de movimiento del cursor
             p.vx += mouse.vx * 0.18;
             p.vy += mouse.vy * 0.18;
           }
         }
 
-        // D. Fricción fluida (inercia orgánica)
         p.vx *= 0.935;
         p.vy *= 0.935;
-
-        // E. Integración de posición
         p.x += p.vx;
         p.y += p.vy;
 
-        // F. Rebote elástico contra los bordes del espejo (se mantienen en los lados sin salirse)
         const distFromCenter = Math.hypot(p.x - centerX, p.y - centerY);
         const wallLimit = maxRadius * 0.93;
         if (distFromCenter > wallLimit) {
           const normalAngle = Math.atan2(p.y - centerY, p.x - centerX);
           p.x = centerX + Math.cos(normalAngle) * wallLimit;
           p.y = centerY + Math.sin(normalAngle) * wallLimit;
-          // Rebote y deslizamiento perimetral
           p.vx = -p.vx * 0.45 + -Math.sin(normalAngle) * 2;
           p.vy = -p.vy * 0.45 + Math.cos(normalAngle) * 2;
         }
 
-        // G. Titilar / Pulso de brillo
         p.pulsePhase += p.pulseRate;
         const currentAlpha = Math.min(1, Math.max(0.2, p.alpha + Math.sin(p.pulsePhase) * 0.25));
 
-        // H. Renderizar partícula estelar
         ctx.save();
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fillStyle = p.color;
         ctx.globalAlpha = currentAlpha;
-        ctx.shadowColor = currentArchangel.colorHex;
-        ctx.shadowBlur = p.size > 2 ? 9 : 4;
         ctx.fill();
         ctx.restore();
       });
@@ -679,21 +858,19 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
       canvas.removeEventListener("touchmove", handleTouchMove);
       canvas.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [selectedId, currentArchangel]);
+  }, [selectedId, currentArchangel, playHarmonicTone]);
 
-  // Manejar clic en el orbe central
   const handleOrbContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const clickX = ((e.clientX - rect.left) / rect.width) * 380;
-    const clickY = ((e.clientY - rect.top) / rect.height) * 380;
+    const clickX = ((e.clientX - rect.left) / rect.width) * 390;
+    const clickY = ((e.clientY - rect.top) / rect.height) * 390;
     clickWaveRef.current = { active: true, r: 5, x: clickX, y: clickY };
     playHarmonicTone(currentArchangel.frequencyHz);
   };
 
-  // Al seleccionar un Arcángel: dispara onda expansiva desde el centro
   const handleSelectArchangel = (archangel: Archangel) => {
     setSelectedId(archangel.id);
-    clickWaveRef.current = { active: true, r: 5, x: 180, y: 180 };
+    clickWaveRef.current = { active: true, r: 5, x: 195, y: 195 };
     playHarmonicTone(archangel.frequencyHz);
   };
 
@@ -704,64 +881,108 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
     if (typeof navigator !== "undefined" && navigator.clipboard) {
       navigator.clipboard.writeText(fullDecree);
       setCopiedStatus(true);
-      setTimeout(() => setCopiedStatus(false), 2200);
+      setTimeout(() => setCopiedStatus(false), 2400);
     }
   };
 
   return (
     <section
-      className={`relative w-full min-h-screen overflow-hidden py-12 px-3 sm:px-6 flex flex-col items-center justify-between text-neutral-100 ${className}`}
+      className={`relative w-full min-h-screen overflow-hidden py-10 px-3 sm:px-6 flex flex-col items-center justify-between text-neutral-100 ${className}`}
       style={{ backgroundColor: "#040508" }}
       aria-label="El Portal de los 7 Arcángeles · Sintonización Sagrada"
     >
-      {/* Fondo Cósmico Suave */}
+      {/* Fondos Cósmicos Suaves */}
       <div
-        className="pointer-events-none absolute -top-16 -right-16 w-80 h-80 sm:w-96 sm:h-96 rounded-full opacity-50 mix-blend-screen"
+        className="pointer-events-none absolute -top-16 -right-16 w-80 h-80 sm:w-96 sm:h-96 rounded-full opacity-40 mix-blend-screen"
         style={{
-          background: "radial-gradient(ellipse 65% 35% at 50% 50%, rgba(255,255,255,0.7) 0%, rgba(192,132,252,0.35) 28%, rgba(99,102,241,0.18) 55%, transparent 75%)",
+          background: "radial-gradient(ellipse 65% 35% at 50% 50%, rgba(255,255,255,0.6) 0%, rgba(192,132,252,0.3) 28%, rgba(99,102,241,0.15) 55%, transparent 75%)",
           transform: "rotate(-28deg)",
-          filter: "blur(6px)"
+          filter: "blur(8px)"
         }}
       />
       <div
-        className="pointer-events-none absolute -bottom-16 -left-16 w-80 h-80 sm:w-96 sm:h-96 rounded-full opacity-45 mix-blend-screen"
+        className="pointer-events-none absolute -bottom-16 -left-16 w-80 h-80 sm:w-96 sm:h-96 rounded-full opacity-35 mix-blend-screen"
         style={{
-          background: "radial-gradient(ellipse 70% 40% at 50% 50%, rgba(255,255,255,0.65) 0%, rgba(212,175,55,0.3) 28%, rgba(168,85,247,0.18) 55%, transparent 75%)",
+          background: "radial-gradient(ellipse 70% 40% at 50% 50%, rgba(255,255,255,0.55) 0%, rgba(212,175,55,0.25) 28%, rgba(168,85,247,0.15) 55%, transparent 75%)",
           transform: "rotate(35deg)",
-          filter: "blur(7px)"
+          filter: "blur(9px)"
         }}
       />
 
-      {/* Resplandor ambiental reactivo con transición suave */}
+      {/* Resplandor ambiental reactivo con transición suave según el rayo */}
       <div
         className="pointer-events-none absolute inset-0 transition-all duration-1000 ease-out"
         style={{
-          background: `radial-gradient(circle 520px at 50% 36%, ${currentArchangel.coreGlow.replace("0.8", "0.14")} 0%, transparent 70%)`
+          background: `radial-gradient(circle 580px at 50% 32%, ${currentArchangel.coreGlow.replace("0.85", "0.18")} 0%, transparent 72%)`
         }}
       />
 
       <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
         {/* ============================================================ */}
-        {/* TÍTULO PRINCIPAL EN SERIF DORADA                             */}
+        {/* ENCABEZADO DE LA EXPERIENCIA                                 */}
         {/* ============================================================ */}
-        <header className="text-center mb-7">
+        <header className="text-center mb-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-amber-400/30 bg-amber-400/10 text-amber-300 text-xs font-semibold tracking-widest uppercase mb-3 shadow-[0_0_15px_rgba(212,175,55,0.2)]">
+            <Sparkles size={13} className="animate-pulse" />
+            <span>Portal Cuántico de Sintonización</span>
+          </div>
+
           <h1
-            className="text-2xl sm:text-3xl md:text-[34px] font-serif tracking-[0.22em] text-[#E8D8BA] uppercase font-normal drop-shadow-[0_2px_14px_rgba(232,216,186,0.3)]"
-            style={{
-              textShadow: "0 0 20px rgba(212, 175, 55, 0.25)"
-            }}
+            className="text-2xl sm:text-3xl md:text-4xl font-sacred tracking-[0.24em] text-[#E8D8BA] uppercase font-bold drop-shadow-[0_2px_14px_rgba(232,216,186,0.3)]"
+            style={{ textShadow: "0 0 25px rgba(212, 175, 55, 0.25)" }}
           >
             EL PORTAL DE LOS 7 ARCÁNGELES
           </h1>
-          <p className="mt-1 text-xs sm:text-sm font-sans text-slate-400 font-light tracking-wide">
-            Pasa el cursor sobre el espejo para dispersar las partículas o haz clic para liberar una onda de luz
+          <p className="mt-1.5 text-xs sm:text-sm font-sans text-slate-300 font-light tracking-wide max-w-xl mx-auto">
+            Canaliza las frecuencias celestiales, activa tu escudo áurico y decreta la manifestación de tu más alta consciencia.
           </p>
         </header>
 
         {/* ============================================================ */}
+        {/* BARRA DE HERRAMIENTAS ACÚSTICAS (Drone Solfeggio & Volumen) */}
+        {/* ============================================================ */}
+        <div className="w-full max-w-2xl mb-6 px-4 py-2.5 rounded-full border border-white/10 bg-[#0C0E18]/80 backdrop-blur-md flex flex-wrap items-center justify-between gap-3 shadow-lg">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggleDrone}
+              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer ${
+                isDroneActive
+                  ? "border border-amber-400 bg-amber-400/25 text-amber-200 shadow-[0_0_15px_rgba(212,175,55,0.4)]"
+                  : "border border-white/15 bg-white/5 text-slate-300 hover:text-white hover:border-amber-400/30"
+              }`}
+            >
+              {isDroneActive ? (
+                <>
+                  <Volume2 size={15} className="text-amber-300 animate-pulse" />
+                  <span>Baño Sonoro {currentArchangel.frequencyHz} Hz Activo</span>
+                </>
+              ) : (
+                <>
+                  <VolumeX size={15} />
+                  <span>Activar Baño Sonoro {currentArchangel.frequencyHz} Hz</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2 text-xs text-slate-400">
+            <span>Volumen</span>
+            <input
+              type="range"
+              min="0.02"
+              max="0.4"
+              step="0.01"
+              value={droneVolume}
+              onChange={(e) => setDroneVolume(parseFloat(e.target.value))}
+              className="w-20 accent-amber-400 h-1 bg-white/20 rounded-lg cursor-pointer"
+            />
+          </div>
+        </div>
+
+        {/* ============================================================ */}
         {/* SELECTOR SUPERIOR: CÁPSULA DE LOS 7 ORBES DE CRISTAL         */}
         {/* ============================================================ */}
-        <div className="relative w-full max-w-3xl mb-7 px-3 sm:px-6 py-3.5 sm:py-4 rounded-full border border-white/[0.1] bg-[#0c0e18]/45 backdrop-blur-md shadow-[0_20px_40px_rgba(0,0,0,0.7)] flex items-center justify-between sm:justify-around gap-1 sm:gap-2 overflow-x-auto sm:overflow-visible">
+        <div className="relative w-full max-w-3xl mb-7 px-3 sm:px-6 py-3.5 sm:py-4 rounded-full border border-white/[0.1] bg-[#0c0e18]/65 backdrop-blur-md shadow-[0_20px_40px_rgba(0,0,0,0.7)] flex items-center justify-between sm:justify-around gap-1 sm:gap-2 overflow-x-auto sm:overflow-visible">
           {ARCHANGELS.map((archangel) => {
             const isSelected = archangel.id === currentArchangel.id;
 
@@ -801,13 +1022,13 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
                   {/* Reflejo especular superior brillante */}
                   <div className="pointer-events-none absolute top-1 inset-x-2.5 h-[34%] rounded-full bg-gradient-to-b from-white/75 to-transparent blur-[0.4px]" />
 
-                  {/* Símbolo sagrado en blanco */}
+                  {/* Símbolo sagrado */}
                   <div className="relative z-10 text-white drop-shadow-[0_2px_5px_rgba(0,0,0,0.9)]">
                     <SacredGlyph symbol={archangel.symbol} className="w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
                 </div>
 
-                {/* Nombre del Arcángel debajo */}
+                {/* Nombre y frecuencia */}
                 <span
                   className="mt-1.5 text-[11px] sm:text-xs font-serif tracking-wider transition-colors duration-300"
                   style={{
@@ -816,6 +1037,9 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
                   }}
                 >
                   {archangel.name}
+                </span>
+                <span className="text-[9px] font-mono text-stone-500">
+                  {archangel.frequencyHz} Hz
                 </span>
               </button>
             );
@@ -826,20 +1050,18 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
         {/* EL PORTAL CÓSMICO CENTRAL CON ONDAS EXPANSIVAS FÍSICAS       */}
         {/* ============================================================ */}
         <div className="relative mb-6 flex flex-col items-center">
-          
           <motion.div
             onClick={handleOrbContainerClick}
             whileHover={{ scale: 1.015 }}
             whileTap={{ scale: 0.985 }}
-            className="group relative w-[280px] h-[280px] sm:w-[330px] sm:h-[330px] rounded-full p-2.5 bg-gradient-to-br from-amber-700 via-yellow-600 to-stone-900 shadow-2xl flex items-center justify-center cursor-pointer transition-all duration-700"
+            className="group relative w-[290px] h-[290px] sm:w-[340px] sm:h-[340px] rounded-full p-2.5 bg-gradient-to-br from-amber-700 via-yellow-600 to-stone-900 shadow-2xl flex items-center justify-center cursor-pointer transition-all duration-700"
             style={{
-              boxShadow: `0 0 50px 10px ${currentArchangel.coreGlow.replace("0.8", "0.25")}`
+              boxShadow: `0 0 55px 12px ${currentArchangel.coreGlow.replace("0.85", "0.28")}`
             }}
-            title="Haz clic para dispersar las partículas con una onda de luz"
+            title="Haz clic para dispersar las partículas con una onda de luz celestial"
           >
             {/* Anillo de Oro Viejo Biselado */}
             <div className="w-full h-full rounded-full p-2 bg-gradient-to-tr from-stone-950 via-[#18120b] to-[#2a1c0d] border-2 border-amber-500/60 shadow-[inset_0_0_25px_rgba(0,0,0,0.95)] flex items-center justify-center relative overflow-hidden">
-              
               {/* Sombra de profundidad interior */}
               <div className="absolute inset-0 rounded-full shadow-[inset_0_0_35px_12px_rgba(0,0,0,0.95)] pointer-events-none z-20" />
 
@@ -861,11 +1083,10 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
                 className="absolute inset-0 z-15 pointer-events-none flex items-center justify-center transition-colors duration-700"
                 style={{ color: currentArchangel.colorHex }}
               >
-                <div className="p-3.5 sm:p-4 rounded-full bg-black/45 backdrop-blur-xs border border-white/15 shadow-[0_0_30px_rgba(0,0,0,0.85)]">
+                <div className="p-3.5 sm:p-4 rounded-full bg-black/50 backdrop-blur-xs border border-white/20 shadow-[0_0_30px_rgba(0,0,0,0.85)]">
                   <SacredGlyph symbol={currentArchangel.symbol} className="w-12 h-12 sm:w-14 sm:h-14 drop-shadow-[0_0_15px_currentColor]" />
                 </div>
               </div>
-
             </div>
           </motion.div>
 
@@ -878,94 +1099,241 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
         </div>
 
         {/* ============================================================ */}
-        {/* TARJETA INFERIOR CON TRANSICIÓN LÍQUIDA Y REVELACIÓN SUAVE  */}
+        {/* PESTAÑAS DE CONTENIDO: DECRETO | MEDITACIÓN | ATRIBUTOS      */}
         {/* ============================================================ */}
         <div className="w-full max-w-2xl px-2 relative mb-6">
-          
-          {/* Pestaña triangular conectora */}
-          <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rotate-45 border-t border-l border-[#D4AF37]/50 bg-[#0C0D17] z-20" />
+          <div className="flex items-center justify-center gap-2 mb-3">
+            {[
+              { id: "decreto", label: "Decreto de Sintonía", icon: Sparkles },
+              { id: "meditacion", label: "Respiración Guiada", icon: Wind },
+              { id: "atributos", label: "Atributos Sagrados", icon: Info }
+            ].map((tab) => {
+              const TabIcon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as typeof activeTab)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold tracking-wider transition-all cursor-pointer ${
+                    isActive
+                      ? "border border-amber-400 bg-amber-400/20 text-amber-200 shadow-[0_0_15px_rgba(212,175,55,0.3)]"
+                      : "border border-white/10 bg-white/5 text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <TabIcon size={14} />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
 
           <AnimatePresence mode="wait">
-            <motion.div
-              key={currentArchangel.id}
-              initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: -12, filter: "blur(4px)" }}
-              transition={{ duration: 0.55, ease: "easeOut" }}
-              className="relative rounded-2xl border border-[#D4AF37]/45 bg-[#0A0C16]/90 backdrop-blur-2xl px-6 sm:px-10 py-7 sm:py-8 shadow-[0_20px_60px_rgba(0,0,0,0.85)] overflow-hidden"
-              style={{
-                boxShadow: `0 25px 65px -15px ${currentArchangel.coreGlow.replace("0.8", "0.18")}, inset 0 1px 1px rgba(212,175,55,0.25)`
-              }}
-            >
-              {/* Símbolo en marca de agua decorativa */}
-              <div className="pointer-events-none absolute top-5 right-6 opacity-30 text-[#D4AF37]">
-                <SacredGlyph symbol={currentArchangel.symbol} className="w-10 h-10" />
-              </div>
+            {/* PESTAÑA 1: DECRETO DE SINTONÍA */}
+            {activeTab === "decreto" && (
+              <motion.div
+                key={`decreto-${currentArchangel.id}`}
+                initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, y: -12, filter: "blur(4px)" }}
+                transition={{ duration: 0.45 }}
+                className="relative rounded-2xl border border-[#D4AF37]/45 bg-[#0A0C16]/95 backdrop-blur-2xl px-6 sm:px-10 py-7 sm:py-8 shadow-[0_20px_60px_rgba(0,0,0,0.85)] overflow-hidden"
+                style={{
+                  boxShadow: `0 25px 65px -15px ${currentArchangel.coreGlow.replace("0.85", "0.2")}, inset 0 1px 1px rgba(212,175,55,0.25)`
+                }}
+              >
+                {/* Símbolo en marca de agua decorativa */}
+                <div className="pointer-events-none absolute top-5 right-6 opacity-25 text-[#D4AF37]">
+                  <SacredGlyph symbol={currentArchangel.symbol} className="w-12 h-12" />
+                </div>
 
-              {/* Título de Canalización y Frecuencia */}
-              <div className="text-center mb-4">
+                {/* Título de Canalización y Frecuencia */}
+                <div className="text-center mb-4">
+                  <span
+                    className="inline-block text-[11px] font-sans tracking-widest uppercase px-3 py-0.5 rounded-full border mb-1.5 transition-colors duration-500 font-semibold"
+                    style={{
+                      color: currentArchangel.colorHex,
+                      borderColor: `${currentArchangel.colorHex}50`,
+                      backgroundColor: `${currentArchangel.colorHex}15`
+                    }}
+                  >
+                    {currentArchangel.rayName} &bull; {currentArchangel.frequencyHz} Hz
+                  </span>
+
+                  <h3 className="text-base sm:text-lg md:text-xl font-sacred tracking-[0.22em] text-[#E8D8BA] uppercase font-bold drop-shadow-sm">
+                    {currentArchangel.title}
+                  </h3>
+                </div>
+
+                {/* Sintonía con Nombre Personalizado */}
+                <div className="flex flex-wrap items-center justify-center gap-2 mb-5 text-xs">
+                  <span className="text-slate-300 font-sans">Sintonizar con mi nombre:</span>
+                  <input
+                    type="text"
+                    value={userName}
+                    onChange={(e) => setUserName(e.target.value)}
+                    placeholder="Escribe tu nombre aquí..."
+                    className="px-3.5 py-1.5 rounded-full border border-[#D4AF37]/40 bg-black/60 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-[#D4AF37] font-serif text-xs transition-all w-48 sm:w-56 text-center"
+                  />
+                </div>
+
+                {/* Cuerpo del Decreto */}
+                <div className="text-center px-1 sm:px-4 mb-6">
+                  <p className="text-xs sm:text-[14px] md:text-[15px] text-slate-200 font-sans leading-relaxed font-light">
+                    Yo, <span className="text-[#E8D8BA] font-serif font-semibold underline underline-offset-4 decoration-[#D4AF37]/60">{displayName}</span>, {currentArchangel.decreeText}
+                  </p>
+                  <p className="mt-4 text-xs sm:text-sm font-sans text-amber-200/90 font-medium tracking-wide">
+                    {currentArchangel.closingText}
+                  </p>
+
+                  {/* Botón de Acción Principal: Copiar Decreto */}
+                  <div className="mt-5 flex justify-center">
+                    <button
+                      onClick={handleCopy}
+                      className="group inline-flex items-center justify-center gap-2.5 py-2.5 sm:py-3 px-6 sm:px-8 rounded-full text-xs sm:text-[13px] font-sans tracking-[0.14em] uppercase transition-all duration-300 border border-[#D4AF37]/60 bg-gradient-to-b from-[#181926] to-[#0A0B13] hover:from-[#232538] hover:to-[#111220] text-[#E8D8BA] hover:text-[#FFF8EB] shadow-[0_4px_15px_rgba(0,0,0,0.6)] hover:shadow-[0_0_20px_rgba(212,175,55,0.35)] hover:scale-[1.02] cursor-pointer"
+                    >
+                      {copiedStatus ? (
+                        <>
+                          <Check size={16} className="text-emerald-400" />
+                          <span className="font-semibold text-emerald-300">¡DECRETO COPIADO AL PORTAPAPELES!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy size={16} className="text-[#D4AF37]" />
+                          <span className="font-semibold">COPIAR DECRETO DE SINTONIZACIÓN</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* PESTAÑA 2: RESPIRACIÓN GUIADA (Pacer 4-4-4-4) */}
+            {activeTab === "meditacion" && (
+              <motion.div
+                key={`meditacion-${currentArchangel.id}`}
+                initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, y: -12, filter: "blur(4px)" }}
+                transition={{ duration: 0.45 }}
+                className="relative rounded-2xl border border-white/10 bg-[#0A0C16]/95 backdrop-blur-2xl px-6 sm:px-10 py-8 shadow-2xl flex flex-col items-center text-center overflow-hidden"
+              >
                 <span
-                  className="inline-block text-[11px] font-sans tracking-widest uppercase px-3 py-0.5 rounded-full border mb-1.5 transition-colors duration-500"
+                  className="text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full border mb-4"
                   style={{
                     color: currentArchangel.colorHex,
                     borderColor: `${currentArchangel.colorHex}50`,
                     backgroundColor: `${currentArchangel.colorHex}15`
                   }}
                 >
-                  {currentArchangel.rayName} &bull; {currentArchangel.frequencyHz} Hz
+                  Respiración de Luz Cuántica &bull; Ritmo 4x4
                 </span>
 
-                <h3 className="text-base sm:text-lg md:text-xl font-serif tracking-[0.22em] text-[#E8D8BA] uppercase font-normal drop-shadow-sm">
-                  {currentArchangel.title}
-                </h3>
-              </div>
-
-              {/* Sintonía con Nombre Personalizado */}
-              <div className="flex items-center justify-center gap-2 mb-4 text-xs">
-                <span className="text-slate-400 font-sans">Sintonizar con mi nombre:</span>
-                <input
-                  type="text"
-                  value={userName}
-                  onChange={(e) => setUserName(e.target.value)}
-                  placeholder="Escribe tu nombre aquí..."
-                  className="px-3 py-1 rounded-md border border-[#D4AF37]/40 bg-black/60 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-[#D4AF37] font-serif text-xs transition-all w-44 sm:w-52"
-                />
-              </div>
-
-              {/* Cuerpo del Decreto */}
-              <div className="text-center px-1 sm:px-4 mb-6">
-                <p className="text-xs sm:text-[13.5px] md:text-sm text-slate-200 font-sans leading-relaxed font-light">
-                  Yo, <span className="text-[#E8D8BA] font-serif font-medium underline underline-offset-4 decoration-[#D4AF37]/50">{displayName}</span>, {currentArchangel.decreeText}
-                </p>
-                <p className="mt-3.5 text-xs sm:text-sm font-sans text-slate-300 font-light tracking-wide">
-                  {currentArchangel.closingText}
-                </p>
-
-                {/* Botón de Acción Principal: Copiar Decreto */}
-                <div className="mt-4 flex justify-center">
-                  <button
-                    onClick={handleCopy}
-                    className="group inline-flex items-center justify-center gap-2.5 py-2.5 sm:py-3 px-6 sm:px-8 rounded-full text-xs sm:text-[13px] font-sans tracking-[0.14em] uppercase transition-all duration-300 border border-[#D4AF37]/60 bg-gradient-to-b from-[#181926] to-[#0A0B13] hover:from-[#232538] hover:to-[#111220] text-[#E8D8BA] hover:text-[#FFF8EB] shadow-[0_4px_15px_rgba(0,0,0,0.6)] hover:shadow-[0_0_20px_rgba(212,175,55,0.35)] hover:scale-[1.02] cursor-pointer"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="w-4 h-4 text-[#D4AF37]"
-                    >
-                      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
-                      <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
-                    </svg>
-                    <span className="font-medium">
-                      {copiedStatus ? "✓ DECRETO COPIADO AL PORTAPAPELES" : "COPIAR DECRETO DE SINTONIZACIÓN"}
-                    </span>
-                  </button>
+                {/* Orbe Pacer con Animación de Escala */}
+                <div className="relative w-36 h-36 my-6 flex items-center justify-center">
+                  <motion.div
+                    animate={{
+                      scale:
+                        breathPhase === "inhala"
+                          ? [1, 1.45]
+                          : breathPhase === "reten"
+                          ? 1.45
+                          : breathPhase === "exhala"
+                          ? [1.45, 1]
+                          : 1
+                    }}
+                    transition={{
+                      duration: breathPhase === "reten" || breathPhase === "reposo" ? 0.3 : 4,
+                      ease: "easeInOut"
+                    }}
+                    className="absolute inset-0 rounded-full"
+                    style={{
+                      background: `radial-gradient(circle, ${currentArchangel.colorHex} 0%, ${currentArchangel.colorHex}22 65%, transparent 75%)`,
+                      boxShadow: `0 0 35px ${currentArchangel.colorHex}80`
+                    }}
+                  />
+                  <div className="relative z-10 font-sacred text-2xl font-bold text-white drop-shadow-md">
+                    {breathSeconds}s
+                  </div>
                 </div>
-              </div>
-            </motion.div>
+
+                <div className="space-y-2 max-w-md">
+                  <h4 className="text-lg font-sacred uppercase tracking-wider text-amber-200">
+                    {breathPhase === "inhala" && "1. Inhala la Luz Divina"}
+                    {breathPhase === "reten" && "2. Retén y Siente la Frecuencia"}
+                    {breathPhase === "exhala" && "3. Exhala y Libera"}
+                    {breathPhase === "reposo" && "4. Reposa en Vacío Sagrado"}
+                  </h4>
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-light">
+                    {breathPhase === "inhala" && currentArchangel.inhaleGuidance}
+                    {breathPhase === "reten" && `Siente cómo la frecuencia de ${currentArchangel.frequencyHz} Hz baña tus células en armonía.`}
+                    {breathPhase === "exhala" && currentArchangel.exhaleGuidance}
+                    {breathPhase === "reposo" && "Permanece en silencio interior, consciente de tu luz eterna."}
+                  </p>
+                </div>
+              </motion.div>
+            )}
+
+            {/* PESTAÑA 3: ATRIBUTOS SAGRADOS Y CORRESPONDENCIAS */}
+            {activeTab === "atributos" && (
+              <motion.div
+                key={`atributos-${currentArchangel.id}`}
+                initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, y: -12, filter: "blur(4px)" }}
+                transition={{ duration: 0.45 }}
+                className="relative rounded-2xl border border-white/10 bg-[#0A0C16]/95 backdrop-blur-2xl p-6 sm:p-8 shadow-2xl space-y-4"
+              >
+                <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                  <h4 className="text-base sm:text-lg font-sacred text-amber-200 uppercase tracking-wider">
+                    Correspondencias Cósmicas de {currentArchangel.name}
+                  </h4>
+                  <span className="font-mono text-xs text-amber-400 font-semibold">{currentArchangel.frequencyHz} Hz Solfeggio</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div className="p-3 rounded-xl border border-white/5 bg-white/[0.02] flex items-start gap-2.5">
+                    <Shield className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="block text-stone-400 font-medium">Virtud y Don Divino</span>
+                      <span className="text-slate-200">{currentArchangel.virtue}</span>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl border border-white/5 bg-white/[0.02] flex items-start gap-2.5">
+                    <Activity className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="block text-stone-400 font-medium">Chakra Resonante</span>
+                      <span className="text-slate-200">{currentArchangel.chakraName}</span>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl border border-white/5 bg-white/[0.02] flex items-start gap-2.5">
+                    <Gem className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="block text-stone-400 font-medium">Cristal / Mineral Sagrado</span>
+                      <span className="text-slate-200">{currentArchangel.crystal}</span>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl border border-white/5 bg-white/[0.02] flex items-start gap-2.5">
+                    <Flame className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="block text-stone-400 font-medium">Elemento & Dirección</span>
+                      <span className="text-slate-200">{currentArchangel.element} &bull; {currentArchangel.direction}</span>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl border border-white/5 bg-white/[0.02] sm:col-span-2 flex items-start gap-2.5">
+                    <Sun className="w-4 h-4 text-yellow-300 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="block text-stone-400 font-medium">Momento Óptimo de Conexión</span>
+                      <span className="text-slate-200">{currentArchangel.dayTime}</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
       </div>
