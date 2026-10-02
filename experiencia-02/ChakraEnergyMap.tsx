@@ -27,7 +27,7 @@ export interface Chakra {
   frequency: string;
   balanceState: string;
   blockedState: string;
-  jessTherapy: string;
+  holisticTherapy: string;
   affirmation: string;
   icon?: string;
 }
@@ -43,7 +43,7 @@ export const CHAKRAS_DATA: Chakra[] = [
     frequency: "963 Hz · Conexión divina",
     balanceState: "Claridad mental, paz profunda y conexión espiritual.",
     blockedState: "Vacío existencial, confusión y desconexión de la fuente.",
-    jessTherapy: "Lectura de Registros Akáshicos y Sanación Cuántica.",
+    holisticTherapy: "Lectura de Registros Akáshicos y Sanación Cuántica.",
     affirmation: "Yo soy conciencia divina conectada con el Todo."
   },
   {
@@ -56,7 +56,7 @@ export const CHAKRAS_DATA: Chakra[] = [
     frequency: "852 Hz · Intuición pura",
     balanceState: "Claridad intuitiva, percepción lúcida y sabiduría interna.",
     blockedState: "Sobrecarga mental, estrés y falta de visión o rumbo.",
-    jessTherapy: "Lectura de Tarot Terapéutico y Canalización.",
+    holisticTherapy: "Lectura de Tarot Terapéutico y Canalización.",
     affirmation: "Confío en mi visión interior y mi sabiduría."
   },
   {
@@ -69,7 +69,7 @@ export const CHAKRAS_DATA: Chakra[] = [
     frequency: "741 Hz · Expresión auténtica",
     balanceState: "Comunicación asertiva, decir tu verdad sin miedo y creatividad vocal.",
     blockedState: "Nudo en la garganta, callar emociones, timidez y represión.",
-    jessTherapy: "Meditación con Arcángel Gabriel y Reiki Usui.",
+    holisticTherapy: "Meditación con Arcángel Gabriel y Reiki Usui.",
     affirmation: "Expreso mi verdad con amor, libertad y calma."
   },
   {
@@ -82,7 +82,7 @@ export const CHAKRAS_DATA: Chakra[] = [
     frequency: "639 Hz · Amor incondicional",
     balanceState: "Compasión, perdón, capacidad de dar y recibir afecto puro.",
     blockedState: "Duelo no resuelto, rencor, corazas y miedo a la vulnerabilidad.",
-    jessTherapy: "Sesión de Reiki Usui & Sanación con Arcángel Rafael.",
+    holisticTherapy: "Sesión de Reiki Usui & Sanación con Arcángel Rafael.",
     affirmation: "Mi corazón está abierto para dar y recibir amor en paz."
   },
   {
@@ -95,7 +95,7 @@ export const CHAKRAS_DATA: Chakra[] = [
     frequency: "528 Hz · Transformación y poder personal",
     balanceState: "Autoconfianza, fuerza de voluntad, liderazgo y límites sanos.",
     blockedState: "Inseguridad, necesidad de control obsesivo, fatiga y baja autoestima.",
-    jessTherapy: "Activación de Energía Kundalini y Reiki.",
+    holisticTherapy: "Activación de Energía Kundalini y Reiki.",
     affirmation: "Reconozco mi poder personal y actúo con seguridad."
   },
   {
@@ -108,7 +108,7 @@ export const CHAKRAS_DATA: Chakra[] = [
     frequency: "417 Hz · Creatividad y placer",
     balanceState: "Fluidez emocional, gozo de vivir, sensualidad y energía creadora.",
     blockedState: "Culpa, apatía, bloqueos creativos, vergüenza o dolor pélvico.",
-    jessTherapy: "Sacerdotisa de Sexualidad Sagrada y Sanación de Útero.",
+    holisticTherapy: "Sacerdotisa de Sexualidad Sagrada y Sanación de Útero.",
     affirmation: "Honro mi cuerpo, mi creatividad y mi derecho al gozo."
   },
   {
@@ -121,19 +121,19 @@ export const CHAKRAS_DATA: Chakra[] = [
     frequency: "396 Hz · Seguridad y enraizamiento",
     balanceState: "Sensación de seguridad, estabilidad financiera, presencia y vitalidad física.",
     blockedState: "Miedo constante, ansiedad de supervivencia, desarraigo e inestabilidad.",
-    jessTherapy: "Armonización con Arcángel Miguel y Enraizamiento.",
+    holisticTherapy: "Armonización con Arcángel Miguel y Enraizamiento.",
     affirmation: "Estoy seguro, sostenido y enraizado a la Madre Tierra."
   }
 ];
 
 export interface ChakraEnergyMapProps {
-  whatsappPhone?: string; // Por defecto: 528110444618
   className?: string;
+  onChakraSelect?: (chakra: Chakra) => void;
 }
 
 export const ChakraEnergyMap: React.FC<ChakraEnergyMapProps> = ({
-  whatsappPhone = "528110444618",
-  className = ""
+  className = "",
+  onChakraSelect
 }) => {
   const [activeChakra, setActiveChakra] = useState<Chakra | null>(CHAKRAS_DATA[3]);
   const [copiedAffirmation, setCopiedAffirmation] = useState(false);
@@ -146,18 +146,13 @@ export const ChakraEnergyMap: React.FC<ChakraEnergyMapProps> = ({
     }
   };
 
-  const getWhatsAppUrl = (chakraName: string) => {
-    const text = `Hola Jess, estuve explorando el mapa de chakras y deseo armonizar mi ${chakraName}.`;
-    return `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(text)}`;
-  };
-
   const activeColor = activeChakra ? activeChakra.colorHex : "#D4AF37";
 
   return (
     <section
       className={`relative w-full overflow-hidden py-16 px-4 sm:px-6 lg:px-8 text-slate-100 transition-colors duration-1000 ${className}`}
       style={{ backgroundColor: "#090A10" }}
-      aria-label="Mapa Energético de Chakras - Nexos Estelares"
+      aria-label="Kit de Herramientas - Mapa Energético de Chakras"
     >
       {/* Resplandor ambiental radial que tiñe suavemente la escena según el chakra activo */}
       <div
@@ -177,7 +172,7 @@ export const ChakraEnergyMap: React.FC<ChakraEnergyMapProps> = ({
         <header className="text-center mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-400/20 bg-amber-400/5 text-amber-300 text-xs uppercase tracking-widest font-medium mb-3">
             <Radio size={13} className="text-amber-300" />
-            <span>Diagnóstico Bioenergético Sagrado</span>
+            <span>Diagnóstico Bioenergético Integral</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif tracking-wider text-slate-50 font-normal">
@@ -185,7 +180,7 @@ export const ChakraEnergyMap: React.FC<ChakraEnergyMapProps> = ({
           </h2>
           <p className="mt-3 text-slate-400 text-sm sm:text-base max-w-2xl mx-auto font-sans leading-relaxed">
             Explora la anatomía sutil de tu ser. Haz clic o pasa el cursor sobre cada punto para descubrir
-            dónde fluye tu vitalidad y qué medicina energética te ofrece Jessica Ramírez.
+            dónde fluye tu vitalidad y qué medicina energética equilibra tu frecuencia.
           </p>
         </header>
 
@@ -429,14 +424,14 @@ export const ChakraEnergyMap: React.FC<ChakraEnergyMapProps> = ({
                     </div>
                   </div>
 
-                  {/* Terapia recomendada con Jessica Ramírez */}
+                  {/* Terapia recomendada */}
                   <div className="p-4 rounded-xl border border-amber-400/20 bg-amber-400/5 mb-6">
                     <span className="text-[11px] uppercase tracking-widest text-amber-300/90 font-medium block mb-1">
-                      Medicina Energética con Jessica Ramírez
+                      Prescripción Holística Sugerida
                     </span>
                     <p className="text-sm font-serif text-amber-100 font-medium flex items-center gap-2">
                       <Sparkles size={15} className="text-amber-300 shrink-0" />
-                      {activeChakra.jessTherapy}
+                      {activeChakra.holisticTherapy}
                     </p>
                   </div>
 
@@ -469,22 +464,19 @@ export const ChakraEnergyMap: React.FC<ChakraEnergyMapProps> = ({
                     </p>
                   </div>
 
-                  {/* Botón de Llamada a la Acción (WhatsApp) */}
+                  {/* Acción del Kit: Copiar Decreto de Armonización */}
                   <div>
-                    <a
-                      href={getWhatsAppUrl(activeChakra.name)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group flex items-center justify-center gap-2.5 w-full py-3.5 px-6 rounded-xl font-medium text-sm transition-all duration-300 text-slate-950 font-sans shadow-lg hover:shadow-xl hover:scale-[1.01]"
+                    <button
+                      onClick={() => handleCopy(`Decreto para ${activeChakra.name} (${activeChakra.frequency}): ${activeChakra.affirmation}`)}
+                      className="group flex items-center justify-center gap-2.5 w-full py-3.5 px-6 rounded-xl font-medium text-sm transition-all duration-300 text-slate-950 font-sans shadow-lg hover:shadow-xl hover:scale-[1.01] cursor-pointer"
                       style={{
                         backgroundColor: "#D4AF37",
                         backgroundImage: "linear-gradient(135deg, #FAF3E0 0%, #D4AF37 55%, #AA820A 100%)"
                       }}
                     >
-                      <MessageCircle size={18} className="fill-slate-950 text-slate-950" />
-                      <span>Agendar armonización para este chakra</span>
-                      <ArrowUpRight size={17} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                    </a>
+                      <Sparkles size={18} className="fill-slate-950 text-slate-950" />
+                      <span>{copiedAffirmation ? "Decreto Copiado al Portapapeles" : "Copiar Decreto de Armonización"}</span>
+                    </button>
                   </div>
                 </motion.div>
               ) : (

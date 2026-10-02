@@ -15,7 +15,7 @@ export function App() {
             </div>
             <div>
               <span className="block text-xs uppercase tracking-[0.28em] text-sky-300 font-sans font-semibold">
-                Nexos Estelares · Experiencia 17
+                Kit de Herramientas Holísticas · Experiencia 17
               </span>
               <h1 className="text-xl sm:text-2xl font-sacred font-bold text-white tracking-wider">
                 Campanas Koshi Elementales
@@ -31,7 +31,7 @@ export function App() {
 
       <footer className="relative z-20 border-t border-white/[0.06] py-6 text-center text-xs text-stone-400">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© {new Date().getFullYear()} Nexos Estelares · Acústica de los 4 Elementos</p>
+          <p>© {new Date().getFullYear()} Kit de Herramientas Holísticas & Acústicas · Acústica de los 4 Elementos</p>
           <div className="flex items-center gap-2 text-sky-300/80">
             <ShieldCheck size={14} />
             <span>Koshi Armonía Pura</span>

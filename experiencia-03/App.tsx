@@ -16,7 +16,7 @@ export function App() {
             </div>
             <div>
               <span className="block text-xs uppercase tracking-[0.28em] text-sky-400 font-sans font-semibold">
-                Nexos Estelares · Experiencia 03
+                Kit de Herramientas Holísticas · Experiencia 03
               </span>
               <h1 className="text-xl sm:text-2xl font-sacred font-bold text-white tracking-wider">
                 Sintonizador Solfeggio Cimático
@@ -40,7 +40,7 @@ export function App() {
       {/* Footer */}
       <footer className="relative z-20 border-t border-white/[0.06] py-8 text-center text-xs text-slate-400">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© {new Date().getFullYear()} Nexos Estelares · Acústica Sagrada & Armonización Celular</p>
+          <p>© {new Date().getFullYear()} Kit de Herramientas Holísticas & Acústicas · Frecuencias Sagradas</p>
           <div className="flex items-center gap-2 text-sky-300/80">
             <ShieldCheck size={14} />
             <span>Frecuencias Puras de Resonancia Universal</span>

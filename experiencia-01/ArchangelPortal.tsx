@@ -16,7 +16,6 @@ export interface Archangel {
   symbol: "sword" | "caduceus" | "trumpet" | "heart" | "flame" | "lion" | "metatron";
   decreeText: string;
   closingText: string;
-  whatsappMessage: string;
 }
 
 export const ARCHANGELS: Archangel[] = [
@@ -32,8 +31,7 @@ export const ARCHANGELS: Archangel[] = [
     palette: ["#93C5FD", "#60A5FA", "#3B82F6", "#1D4ED8", "#FFFFFF"],
     symbol: "sword",
     decreeText: "invoco la presencia del Arcángel Miguel y su espada de luz zafiro. Corto todo lazo de miedo, juicio o atadura densa. Sello mi campo energético en la verdad divina y camino con valentía, soberanía y fe inquebrantable.",
-    closingText: "Soy fuerza, soy valentía, soy protección.",
-    whatsappMessage: "Hola Jess, sentí conectar con el Arcángel Miguel en tu web. Me gustaría info sobre el taller de blindaje áurico."
+    closingText: "Soy fuerza, soy valentía, soy protección."
   },
   {
     id: "rafael",
@@ -43,12 +41,11 @@ export const ARCHANGELS: Archangel[] = [
     frequencyHz: 528,
     chakraName: "Corazón & Sanación",
     colorHex: "#10B981",
-    coreGlow: "rgba(16, 185, 129, 0.8)",
+    coreGlow: "rgba(168, 185, 129, 0.8)",
     palette: ["#A7F3D0", "#34D399", "#10B981", "#047857", "#FFFFFF"],
     symbol: "caduceus",
     decreeText: "abro cada célula, tejido y emoción al bálsamo esmeralda de Rafael. Libero las memorias de dolor físico o psíquico, restauro la armonía de mi cuerpo y permito que la salud perfecta del Cosmos fluya en mí.",
-    closingText: "Soy salud, soy armonía, soy renovación.",
-    whatsappMessage: "Hola Jess, me resonó la energía del Arcángel Rafael. Quisiera agendar una sesión de Reiki y sanación energética."
+    closingText: "Soy salud, soy armonía, soy renovación."
   },
   {
     id: "gabriel",
@@ -62,8 +59,7 @@ export const ARCHANGELS: Archangel[] = [
     palette: ["#FFFFFF", "#E2E8F0", "#CBD5E1", "#94A3B8", "#FEF08A"],
     symbol: "trumpet",
     decreeText: "recibo la trompeta celestial y la luz diamantina de Gabriel. Despejo toda confusión de mi mente, abro mi corazón a los mensajes divinos y expreso mi verdad con autenticidad, gracia y propósito sagrado.",
-    closingText: "Soy claridad, soy verdad, soy luz pura.",
-    whatsappMessage: "Hola Jess, conecté con el Arcángel Gabriel en el portal. Me gustaría consultar una sesión de Tarot Terapéutico y claridad."
+    closingText: "Soy claridad, soy verdad, soy luz pura."
   },
   {
     id: "chamuel",
@@ -77,8 +73,7 @@ export const ARCHANGELS: Archangel[] = [
     palette: ["#FBCFE8", "#F472B6", "#EC4899", "#BE185D", "#FFFFFF"],
     symbol: "heart",
     decreeText: "envuelvo mi corazón en la llama rosa del Arcángel Chamuel. Sano toda herida de abandono o desamor, me abro a relaciones sagradas y elijo mirarme con ternura infinita y compasión divina.",
-    closingText: "Soy amor, soy perdón, soy paz en mis vínculos.",
-    whatsappMessage: "Hola Jess, conecté con el Arcángel Chamuel. Quisiera orientación para sanar mi corazón y armonizar mis vínculos afectivos."
+    closingText: "Soy amor, soy perdón, soy paz en mis vínculos."
   },
   {
     id: "uriel",
@@ -92,8 +87,7 @@ export const ARCHANGELS: Archangel[] = [
     palette: ["#FED7AA", "#FB923C", "#EA580C", "#9A3412", "#FDE047"],
     symbol: "flame",
     decreeText: "recibo la antorcha sagrada y la sabiduría divina del Arcángel Uriel. Disuelvo la ansiedad ante lo incierto, recibo respuestas claras para resolver mis desafíos y confío en la providencia del Universo.",
-    closingText: "Soy sabiduría, soy serenidad, soy luz en el camino.",
-    whatsappMessage: "Hola Jess, resoné con el Arcángel Uriel. Me gustaría una sesión para obtener claridad en un momento de cambio importante."
+    closingText: "Soy sabiduría, soy serenidad, soy luz en el camino."
   },
   {
     id: "ariel",
@@ -107,8 +101,7 @@ export const ARCHANGELS: Archangel[] = [
     palette: ["#FEF08A", "#FACC15", "#EAB308", "#CA8A04", "#FFFFFF"],
     symbol: "lion",
     decreeText: "reconozco la generosidad de la Madre Tierra guiada por la presencia de Ariel. Abro mis brazos para recibir abundancia en sincronía perfecta y honro mi poder infinito de materializar prosperidad.",
-    closingText: "Soy abundancia, soy gratitud, soy prosperidad.",
-    whatsappMessage: "Hola Jess, sentí una fuerte conexión con el Arcángel Ariel. Quisiera info sobre el taller de manifestación y abundancia."
+    closingText: "Soy abundancia, soy gratitud, soy prosperidad."
   },
   {
     id: "metatron",
@@ -122,8 +115,7 @@ export const ARCHANGELS: Archangel[] = [
     palette: ["#F3E8FF", "#C084FC", "#A855F7", "#7E22CE", "#FDE047"],
     symbol: "metatron",
     decreeText: "reconozco mi divinidad interior y me conecto con la sabiduría cósmica de Metatrón. Abrazo mi luz, activo mi geometría sagrada y me alineo con la guía universal para manifestar mi más alta consciencia.",
-    closingText: "Soy amor, soy luz, soy paz.",
-    whatsappMessage: "Hola Jess, me conecté con la energía de Metatrón. Quisiera saber cómo agendar Registros Akáshicos o Sanación Cuántica."
+    closingText: "Soy amor, soy luz, soy paz."
   }
 ];
 
@@ -225,13 +217,11 @@ const SacredGlyph: React.FC<{ symbol: Archangel["symbol"]; className?: string }>
 };
 
 export interface ArchangelPortalProps {
-  phoneWhatsApp?: string; // 528110444618
   className?: string;
   initialId?: string;
 }
 
 export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
-  phoneWhatsApp = "528110444618",
   className = "",
   initialId = "metatron"
 }) => {
@@ -718,16 +708,11 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
     }
   };
 
-  const getWhatsAppUrl = () => {
-    const text = `Hola Jess, estuve en el Portal de los 7 Arcángeles. Mi nombre es ${displayName} y conecté con el ${currentArchangel.name} (${currentArchangel.rayName}). Me gustaría consultar información sobre tus sesiones y talleres.`;
-    return `https://wa.me/${phoneWhatsApp}?text=${encodeURIComponent(text)}`;
-  };
-
   return (
     <section
       className={`relative w-full min-h-screen overflow-hidden py-12 px-3 sm:px-6 flex flex-col items-center justify-between text-neutral-100 ${className}`}
       style={{ backgroundColor: "#040508" }}
-      aria-label="El Portal de los 7 Arcángeles - Nexos Estelares"
+      aria-label="El Portal de los 7 Arcángeles · Sintonización Sagrada"
     >
       {/* Fondo Cósmico Suave */}
       <div
@@ -956,38 +941,29 @@ export const ArchangelPortal: React.FC<ArchangelPortalProps> = ({
                   {currentArchangel.closingText}
                 </p>
 
-                {/* Copiar decreto */}
-                <div className="mt-3 flex justify-center">
+                {/* Botón de Acción Principal: Copiar Decreto */}
+                <div className="mt-4 flex justify-center">
                   <button
                     onClick={handleCopy}
-                    className="inline-flex items-center gap-1.5 text-[11px] text-slate-400 hover:text-[#E8D8BA] transition-colors"
+                    className="group inline-flex items-center justify-center gap-2.5 py-2.5 sm:py-3 px-6 sm:px-8 rounded-full text-xs sm:text-[13px] font-sans tracking-[0.14em] uppercase transition-all duration-300 border border-[#D4AF37]/60 bg-gradient-to-b from-[#181926] to-[#0A0B13] hover:from-[#232538] hover:to-[#111220] text-[#E8D8BA] hover:text-[#FFF8EB] shadow-[0_4px_15px_rgba(0,0,0,0.6)] hover:shadow-[0_0_20px_rgba(212,175,55,0.35)] hover:scale-[1.02] cursor-pointer"
                   >
-                    <span>{copiedStatus ? "✓ Decreto Copiado" : "📋 Copiar Decreto Personalizado"}</span>
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="w-4 h-4 text-[#D4AF37]"
+                    >
+                      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                      <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+                    </svg>
+                    <span className="font-medium">
+                      {copiedStatus ? "✓ DECRETO COPIADO AL PORTAPAPELES" : "COPIAR DECRETO DE SINTONIZACIÓN"}
+                    </span>
                   </button>
                 </div>
-              </div>
-
-              {/* Botón: AGENDAR SESIÓN VÍA WHATSAPP */}
-              <div className="flex justify-center">
-                <a
-                  href={getWhatsAppUrl()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group inline-flex items-center justify-center gap-2.5 py-2.5 sm:py-3 px-6 sm:px-8 rounded-full text-xs sm:text-[13px] font-sans tracking-[0.14em] uppercase transition-all duration-300 border border-[#D4AF37]/60 bg-gradient-to-b from-[#181926] to-[#0A0B13] hover:from-[#232538] hover:to-[#111220] text-[#E8D8BA] hover:text-[#FFF8EB] shadow-[0_4px_15px_rgba(0,0,0,0.6)] hover:shadow-[0_0_20px_rgba(212,175,55,0.35)] hover:scale-[1.02]"
-                >
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.7"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="w-4 h-4 text-[#D4AF37]"
-                  >
-                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-                  </svg>
-                  <span className="font-medium">AGENDAR SESIÓN VÍA WHATSAPP</span>
-                </a>
               </div>
             </motion.div>
           </AnimatePresence>

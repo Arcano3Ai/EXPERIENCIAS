@@ -1,6 +1,6 @@
-# 🌌 Nexos Estelares · Suite Completa de 20 Experiencias Místicas
+# 🌌 Kit de Herramientas Holísticas & Acústicas · Suite Completa de 20 Experiencias
 
-Suite de experiencias sensoriales, acústicas, terapéuticas y espirituales interactivas de alta fidelidad.
+Suite independiente de herramientas sensoriales, acústicas, terapéuticas y holísticas interactivas de alta fidelidad.
 
 ---
 
